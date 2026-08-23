@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), "Segoe UI", Arial, sans-serif;
+
+  /* Navy — headers, footer, admin nav, hero gradient */
+  --color-navy-950: #061029;
+  --color-navy-900: #0c2050;
+  --color-navy-800: #0e1c3c;
+  --color-navy-700: #122c63;
+
+  /* Cream/beige — primary accent + CTA color (NOT literal red, despite the old --red var name) */
+  --color-cream-100: #f3efe6;
+  --color-cream-200: #ece5d6;
+  --color-cream-300: #e8e2d6;
+  --color-cream-400: #ddd3bf;
+
+  --color-muted: #68717b;
+  --color-muted-soft: #59616c;
+  --color-line: #e5e7eb;
+  --color-border: #e1e4e8;
+  --color-surface: #ffffff;
+  --color-bg-soft: #f7f7f8;
+
+  --radius-card-sm: 18px;
+  --radius-card-lg: 24px;
+
+  --shadow-card: 0 1px 2px rgba(12, 32, 80, 0.04), 0 8px 24px rgba(12, 32, 80, 0.06);
+  --shadow-card-hover: 0 4px 10px rgba(12, 32, 80, 0.08), 0 16px 40px rgba(12, 32, 80, 0.1);
+}
+
+body {
+  background: var(--color-bg-soft);
+  color: var(--color-navy-800);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton {
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+  background-color: var(--color-line);
+  border-radius: var(--radius-card-sm);
+}
