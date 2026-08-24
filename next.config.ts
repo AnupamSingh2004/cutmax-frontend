@@ -5,6 +5,7 @@ const parsed = new URL(backendOrigin);
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  output: "standalone",
   images: {
     remotePatterns: [
       {

@@ -13,8 +13,14 @@ const inter = localFont({
   ],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001";
+
 export const metadata: Metadata = {
-  title: "CutMax Technologies — Precision Cutting Tools",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "CutMax Technologies — Precision Cutting Tools",
+    template: "%s",
+  },
   description: "Carbide inserts, end mills, tool holders and more — built for CNC performance.",
   icons: { icon: "/logo.png" },
 };
