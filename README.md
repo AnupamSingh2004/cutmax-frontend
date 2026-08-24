@@ -36,3 +36,22 @@ Next.js (App Router) + Tailwind CSS storefront and admin panel for CutMax Techno
 - Color tokens (Tailwind v4 `@theme`, see `src/styles/globals.css`): deep navy (`navy-900`/`navy-950`)
   for headers/footer/hero, cream/beige (`cream-300`) as the primary accent/CTA color, rounded
   18–24px cards, soft shadows — matching the legacy site's visual language.
+
+## SEO
+
+Product detail pages (`products/[sku]`) are server-rendered with `generateMetadata` producing a
+real per-product `<title>`, description, and Open Graph/Twitter card image — this matters a lot
+here since the whole quote flow runs through WhatsApp, and link previews depend on it. `robots.ts`
+and `sitemap.ts` are file-convention routes; the sitemap pulls live SKUs from the backend on each
+build/revalidation. Set `NEXT_PUBLIC_SITE_URL` to the real deployed domain in production so OG
+image URLs and sitemap entries resolve correctly (defaults to `http://localhost:3001` otherwise).
+
+## Production build / Docker
+
+```bash
+docker build -t cutmax-frontend --build-arg NEXT_PUBLIC_API_URL=https://api.yourdomain.com .
+docker run -p 3001:3001 -e NEXT_PUBLIC_API_URL=https://api.yourdomain.com cutmax-frontend
+```
+
+`NEXT_PUBLIC_*` vars are inlined into the client bundle at build time (standard Next.js behavior),
+so `NEXT_PUBLIC_API_URL` must be passed as a build arg, not just a runtime env var.
