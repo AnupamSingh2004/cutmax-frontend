@@ -45,7 +45,19 @@ function ProductsPageInner() {
     if (q) params.set("q", q);
 
     apiFetch<ProductsResponse>(`/api/public/products?${params.toString()}`)
-      .then(setData)
+      .then((res) => {
+        if (res && typeof res === "object") {
+          setData({
+            products: Array.isArray(res.products) ? res.products : [],
+            total: res.total ?? 0,
+            page: res.page ?? 1,
+            per_page: res.per_page ?? PER_PAGE,
+            brands: Array.isArray(res.brands) ? res.brands : [],
+            settings: res.settings ?? { whatsapp: "", gst_percent: 18, low_stock: 10 },
+          });
+        }
+      })
+      .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [filters.category, filters.sub, filters.brand, filters.sort, q, page]);
 
@@ -81,7 +93,7 @@ function ProductsPageInner() {
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
-          ) : !data || data.products.length === 0 ? (
+          ) : !data || !data.products || data.products.length === 0 ? (
             <p className="text-muted">No products found. Try adjusting your filters.</p>
           ) : (
             <>

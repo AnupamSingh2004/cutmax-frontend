@@ -31,7 +31,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                   min={0}
                   value={item.qty}
                   onChange={(e) => setQty(item.sku, Math.max(0, Number(e.target.value)))}
-                  className="w-16 rounded-lg border border-border px-2 py-1 text-sm"
+                  className="w-16 rounded-md border border-border px-2 py-1 text-sm"
                 />
                 <button onClick={() => removeItem(item.sku)} className="text-xs text-red-600 hover:underline">
                   Remove

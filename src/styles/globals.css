@@ -2,6 +2,7 @@
 
 @theme {
   --font-sans: var(--font-inter), "Segoe UI", Arial, sans-serif;
+  --font-display: var(--font-outfit), var(--font-inter), "Segoe UI", sans-serif;
 
   /* Navy — headers, footer, admin nav, hero gradient */
   --color-navy-950: #061029;
@@ -22,8 +23,14 @@
   --color-surface: #ffffff;
   --color-bg-soft: #f7f7f8;
 
-  --radius-card-sm: 18px;
-  --radius-card-lg: 24px;
+  /* Orange accent — WhatsApp, CTAs, highlights */
+  --color-orange-500: #F97316;
+  --color-orange-600: #EA580C;
+  --color-green-500: #25D366;
+  --color-green-600: #128C7E;
+
+  --radius-card-sm: 8px;
+  --radius-card-lg: 12px;
 
   --shadow-card: 0 1px 2px rgba(12, 32, 80, 0.04), 0 8px 24px rgba(12, 32, 80, 0.06);
   --shadow-card-hover: 0 4px 10px rgba(12, 32, 80, 0.08), 0 16px 40px rgba(12, 32, 80, 0.1);
@@ -59,4 +66,89 @@ body {
   animation: skeleton-pulse 1.6s ease-in-out infinite;
   background-color: var(--color-line);
   border-radius: var(--radius-card-sm);
+}
+
+/* Ken Burns slow zoom for hero image — simulates video motion */
+@keyframes kenBurns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+
+.hero-ken-burns {
+  animation: kenBurns 12s ease-in-out infinite alternate;
+}
+
+/* Translucent animated rings in hero */
+@keyframes ringRotate1 {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes ringRotate2 {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+@keyframes ringPulse {
+  0%, 100% { opacity: 0.08; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.15; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.hero-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  pointer-events: none;
+}
+.hero-ring-1 {
+  width: 500px;
+  height: 500px;
+  top: 50%;
+  left: 65%;
+  animation: ringRotate1 30s linear infinite;
+}
+.hero-ring-2 {
+  width: 650px;
+  height: 650px;
+  top: 50%;
+  left: 65%;
+  animation: ringRotate2 40s linear infinite;
+}
+.hero-ring-3 {
+  width: 400px;
+  height: 400px;
+  top: 40%;
+  left: 70%;
+  animation: ringPulse 8s ease-in-out infinite;
+}
+.hero-ring-4 {
+  width: 300px;
+  height: 300px;
+  top: 60%;
+  left: 55%;
+  animation: ringRotate1 25s linear infinite reverse;
+}
+
+/* Watermark ghost text behind sections */
+.section-watermark {
+  position: relative;
+  overflow: hidden;
+}
+.section-watermark::before {
+  content: "CUTMAX TECHNOLOGIES";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  font-family: var(--font-outfit), sans-serif;
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 900;
+  white-space: nowrap;
+  color: rgba(12, 32, 80, 0.03);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.05em;
+  z-index: 0;
+}
+.section-watermark > * {
+  position: relative;
+  z-index: 1;
 }

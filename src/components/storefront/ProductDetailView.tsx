@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { Product, PriceTier } from "@/lib/types";
 import { productImageSrc } from "@/lib/product-image";
 import { Button } from "@/components/ui/Button";
@@ -9,17 +9,20 @@ import { stockBadge } from "@/components/ui/Badge";
 import { PriceTierTable } from "@/components/storefront/PriceTierTable";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { useCartStore } from "@/lib/cart-store";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/lib/taxonomy";
 
 export function ProductDetailView({ product, tiers, related }: { product: Product; tiers: PriceTier[]; related: Product[] }) {
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
+  const [imgSrc, setImgSrc] = useState(productImageSrc(product));
+  const onImgError = useCallback(() => { setImgSrc(DEFAULT_PLACEHOLDER_IMAGE); }, []);
   const whatsappMessage = encodeURIComponent(`Hi, I'm interested in ${product.name} (SKU: ${product.sku}). Please share CAD/STEP files and pricing.`);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-card-lg border border-border bg-white">
-          <Image src={productImageSrc(product)} alt={product.name} fill sizes="500px" className="object-contain p-10" priority />
+        <div className="relative aspect-square overflow-hidden rounded-card-sm border border-border bg-white">
+          <Image src={imgSrc} alt={product.name} fill sizes="500px" className="object-contain p-10" priority onError={onImgError} />
         </div>
 
         <div>
@@ -57,7 +60,7 @@ export function ProductDetailView({ product, tiers, related }: { product: Produc
               href={`https://wa.me/?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-navy-900 hover:bg-bg-soft"
+              className="rounded-md border border-border px-4 py-2.5 text-sm font-semibold text-navy-900 hover:bg-bg-soft"
             >
               Request CAD/STEP
             </a>

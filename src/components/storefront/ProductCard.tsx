@@ -2,26 +2,30 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { Product } from "@/lib/types";
 import { productImageSrc } from "@/lib/product-image";
 import { stockBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useCartStore } from "@/lib/cart-store";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/lib/taxonomy";
 
 export function ProductCard({ product, lowStockLimit }: { product: Product; lowStockLimit: number }) {
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
+  const [imgSrc, setImgSrc] = useState(productImageSrc(product));
+  const onImgError = useCallback(() => { setImgSrc(DEFAULT_PLACEHOLDER_IMAGE); }, []);
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-card-lg border border-border bg-white shadow-card transition-shadow hover:shadow-card-hover">
+    <div className="group flex flex-col overflow-hidden rounded-card-sm border border-border bg-white shadow-card transition-all hover:shadow-card-hover hover:border-navy-200">
       <Link href={`/products/${product.sku}`} className="relative block aspect-square bg-bg-soft">
         <Image
-          src={productImageSrc(product)}
+          src={imgSrc}
           alt={product.name}
           fill
           sizes="(max-width: 640px) 50vw, 280px"
           className="object-contain p-6 transition-transform group-hover:scale-105"
+          onError={onImgError}
         />
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-4">
