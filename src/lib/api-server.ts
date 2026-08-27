@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 /** Server Component fetch helper — forwards the incoming request's cookies to the backend so auth-gated GETs work during SSR. */
 export async function serverApiFetch<T>(path: string, init?: RequestInit): Promise<T | null> {

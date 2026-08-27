@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 const CSRF_HEADER_NAME = "x-csrf-token";
 const CSRF_MARKER_HEADER = "x-requested-with";

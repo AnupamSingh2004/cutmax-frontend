@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { API_BASE } from "@/lib/api-client";
 import type { Product } from "@/lib/types";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
 
 async function getAllProductSkus(): Promise<string[]> {
   try {
