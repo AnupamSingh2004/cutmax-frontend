@@ -11,7 +11,8 @@ Next.js (App Router) + Tailwind CSS storefront and admin panel for CutMax Techno
 - `src/app/admin/*` — admin panel, gated behind its own admin session (`/admin/login`), fully separate
   from the customer auth used by the storefront: dashboard (KPIs + charts), products (CRUD, inline
   price/stock edit, image upload), bulk product/image import, price tiers, enquiries + PDF quote
-  export, settings, audit log.
+  export, settings, audit log, media library (`/admin/media` — images/video not tied to a product,
+  e.g. the homepage hero/background video; copy an asset's URL from there into Settings to use it).
 - `src/components/ui` — shared primitives (Button, Input, Badge, Skeleton, Drawer/Modal, Pagination).
 - `src/components/storefront`, `src/components/admin` — feature components.
 - `src/lib/api-client.ts` — browser fetch wrapper (credentials, CSRF token injection).
@@ -55,3 +56,8 @@ docker run -p 3001:3001 -e NEXT_PUBLIC_API_URL=https://api.yourdomain.com cutmax
 
 `NEXT_PUBLIC_*` vars are inlined into the client bundle at build time (standard Next.js behavior),
 so `NEXT_PUBLIC_API_URL` must be passed as a build arg, not just a runtime env var.
+
+If `cutmax-backend` is running with `STORAGE_DRIVER=s3` (R2), also set `NEXT_PUBLIC_R2_PUBLIC_BASE_URL`
+to the same value as the backend's `S3_PUBLIC_BASE_URL` — `next.config.ts` needs it to allow-list
+that host for `next/image`, otherwise R2-hosted product photos won't optimize (they're still fully
+functional as plain `<img>`-equivalent, just without Next's image optimization).

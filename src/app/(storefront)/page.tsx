@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { TAXONOMY } from "@/lib/taxonomy";
 import { API_BASE } from "@/lib/api-client";
-import type { Product } from "@/lib/types";
+import type { Product, PublicSettings } from "@/lib/types";
 import { PageHeading } from "@/components/ui/PageHeading";
 
 const WHATSAPP_NUMBER = "918856828894";
@@ -10,18 +10,20 @@ const WHATSAPP_NUMBER = "918856828894";
 interface ProductsResponse {
   products: Product[];
   total: number;
+  settings: PublicSettings;
 }
 
 async function getProducts(): Promise<ProductsResponse> {
+  const empty: ProductsResponse = { products: [], total: 0, settings: { whatsapp: "", gst_percent: 18, low_stock: 10 } };
   try {
     const res = await fetch(`${API_BASE}/api/public/products?per_page=500&sort=newest`, {
       next: { revalidate: 60 },
     });
-    if (!res.ok) return { products: [], total: 0 };
+    if (!res.ok) return empty;
     const data = await res.json();
-    return { products: data.products ?? [], total: 0 };
+    return { products: data.products ?? [], total: 0, settings: data.settings ?? empty.settings };
   } catch {
-    return { products: [], total: 0 };
+    return empty;
   }
 }
 
@@ -34,7 +36,7 @@ function countByCategory(products: Product[]): Record<string, number> {
 }
 
 export default async function HomePage() {
-  const { products, total } = await getProducts();
+  const { products, total, settings } = await getProducts();
   const categoryCounts = countByCategory(products);
 
   return (
@@ -97,7 +99,7 @@ export default async function HomePage() {
                 playsInline
                 preload="metadata"
               >
-                <source src="/videos/products-hero.mp4" type="video/mp4" />
+                <source src={settings.hero_video_url || "/videos/products-hero.mp4"} type="video/mp4" />
               </video>
               <div
                 className="absolute inset-0"

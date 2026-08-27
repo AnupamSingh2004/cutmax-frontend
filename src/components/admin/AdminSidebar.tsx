@@ -9,6 +9,7 @@ import type { Admin } from "@/lib/session";
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/products", label: "Products" },
+  { href: "/admin/media", label: "Media Library" },
   { href: "/admin/price-tiers", label: "Price Tiers" },
   { href: "/admin/enquiries", label: "Enquiries" },
   { href: "/admin/settings", label: "Settings" },

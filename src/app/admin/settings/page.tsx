@@ -16,6 +16,8 @@ const SETTINGS_FIELDS: { key: string; label: string; multiline?: boolean }[] = [
   { key: "company_phone", label: "Company Phone" },
   { key: "hero_title", label: "Hero Title" },
   { key: "hero_subtitle", label: "Hero Subtitle", multiline: true },
+  { key: "hero_video_url", label: "Hero Video URL (from Media Library)" },
+  { key: "site_background_video_url", label: "Site Background Video URL (from Media Library)" },
 ];
 
 export default function AdminSettingsPage() {

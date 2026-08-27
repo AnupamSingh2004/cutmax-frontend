@@ -30,6 +30,19 @@ export interface PublicSettings {
   whatsapp: string;
   gst_percent: number;
   low_stock: number;
+  hero_video_url?: string;
+  site_background_video_url?: string;
+}
+
+export interface MediaAsset {
+  id: string;
+  key: string;
+  url: string;
+  kind: "IMAGE" | "VIDEO";
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
+  createdAt: string;
 }
 
 export type EnquiryStatus = "NEW" | "CONTACTED" | "QUOTED" | "WON" | "LOST" | "ARCHIVED";
