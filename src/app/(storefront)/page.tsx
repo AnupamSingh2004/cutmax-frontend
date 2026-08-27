@@ -3,6 +3,7 @@ import Image from "next/image";
 import { TAXONOMY } from "@/lib/taxonomy";
 import { API_BASE } from "@/lib/api-client";
 import type { Product } from "@/lib/types";
+import { PageHeading } from "@/components/ui/PageHeading";
 
 const WHATSAPP_NUMBER = "918856828894";
 
@@ -32,17 +33,6 @@ function countByCategory(products: Product[]): Record<string, number> {
   return counts;
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mb-3 flex items-center gap-3">
-      <span className="h-px w-8 bg-navy-900"></span>
-      <span className="font-[family-name:var(--font-outfit)] text-xs font-bold uppercase tracking-[0.2em] text-navy-900">
-        {children}
-      </span>
-    </div>
-  );
-}
-
 export default async function HomePage() {
   const { products, total } = await getProducts();
   const categoryCounts = countByCategory(products);
@@ -50,23 +40,26 @@ export default async function HomePage() {
   return (
     <div>
       {/* ════════ Hero Section ════════ */}
-      <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0a1a3e 0%, #0f2d5e 40%, #1a4080 70%, #2a5aa0 100%)" }}>
-        {/* Animated translucent rings */}
-        <div className="hero-ring hero-ring-1" />
-        <div className="hero-ring hero-ring-2" />
-        <div className="hero-ring hero-ring-3" />
-        <div className="hero-ring hero-ring-4" />
+      <section
+        className="relative overflow-hidden"
+        style={{
+          background:
+            "radial-gradient(circle at 75% 25%, rgba(232,226,214,.18), transparent 45%), linear-gradient(120deg, var(--color-navy-950), var(--color-navy-700))",
+        }}
+      >
+        {/* Soft pulsing ring, top-right */}
+        <div className="hero-pulse-ring" />
 
         <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-14 sm:py-16 lg:grid-cols-2 lg:py-20">
           {/* Left — Copy */}
           <div className="text-cream-100">
             <div className="mb-4 flex items-center gap-3">
               <span className="h-px w-8 bg-cream-300"></span>
-              <span className="font-[family-name:var(--font-outfit)] text-sm font-semibold uppercase tracking-[0.2em] text-cream-300">
+              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-cream-300">
                 B2B Industrial Catalogue
               </span>
             </div>
-            <h1 className="font-[family-name:var(--font-outfit)] text-[2.5rem] font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+            <h1 className="text-[2.5rem] font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
               Industrial Products.
               <br />
               Reliable Supply.
@@ -93,21 +86,29 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right — Industrial visual with slow-zoom */}
+          {/* Right — Precision tooling video panel */}
           <div className="relative hidden lg:block">
             <div className="relative aspect-[4/3] overflow-hidden rounded-card-sm bg-navy-800">
-              <Image
-                src="/products/flat-endmill.png"
-                alt="Precision CNC Cutting Tools"
-                fill
-                sizes="600px"
-                className="hero-ken-burns object-cover"
-                priority
+              <video
+                className="absolute inset-0 h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+              >
+                <source src="/videos/products-hero.mp4" type="video/mp4" />
+              </video>
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(4,5,7,.08), rgba(4,5,7,.68)), linear-gradient(90deg, rgba(232,226,214,.2), transparent 46%)",
+                }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/10 to-transparent" />
               <div className="absolute bottom-0 left-0 p-7">
-                <p className="font-[family-name:var(--font-outfit)] text-[10px] font-bold uppercase tracking-[0.3em] text-cream-300/70">Cutmax Technologies</p>
-                <p className="font-[family-name:var(--font-outfit)] mt-1 text-base font-bold uppercase tracking-wider text-cream-100">Precision CNC Tooling</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cream-300/70">Cutmax Technologies</p>
+                <p className="mt-1 text-base font-bold uppercase tracking-wider text-cream-100">Precision CNC Tooling</p>
                 <p className="mt-0.5 text-[10px] uppercase tracking-[0.25em] text-cream-100/50">Engineered for Performance</p>
               </div>
             </div>
@@ -116,12 +117,9 @@ export default async function HomePage() {
       </section>
 
       {/* ════════ Why Cutmax — Built for industrial procurement ════════ */}
-      <section className="section-watermark bg-cream-100">
+      <section className="bg-cream-100">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:py-20">
-          <SectionLabel>Why Cutmax</SectionLabel>
-          <h2 className="font-[family-name:var(--font-outfit)] mb-10 text-3xl font-bold text-navy-900 sm:text-4xl">
-            Built for industrial procurement
-          </h2>
+          <PageHeading eyebrow="Why Cutmax" title="Built for industrial procurement" className="mb-10" />
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {[
               {
@@ -138,7 +136,7 @@ export default async function HomePage() {
               },
             ].map((f) => (
               <div key={f.title} className="rounded-card-sm border border-border bg-white p-6 shadow-card">
-                <h3 className="mb-2 font-[family-name:var(--font-outfit)] text-lg font-bold text-navy-900">{f.title}</h3>
+                <h3 className="mb-2 text-lg font-bold text-navy-900">{f.title}</h3>
                 <p className="text-sm leading-relaxed text-muted">{f.desc}</p>
               </div>
             ))}
@@ -147,15 +145,10 @@ export default async function HomePage() {
       </section>
 
       {/* ════════ Shop by Category ════════ */}
-      <section className="section-watermark bg-cream-100">
+      <section className="bg-cream-100">
         <div className="mx-auto max-w-7xl px-4 pb-14 sm:pb-20">
           <div className="mb-8 flex items-end justify-between">
-            <div>
-              <SectionLabel>Shop by Category</SectionLabel>
-              <h2 className="font-[family-name:var(--font-outfit)] text-3xl font-bold text-navy-900 sm:text-4xl">
-                Browse the catalogue
-              </h2>
-            </div>
+            <PageHeading eyebrow="Shop by Category" title="Browse the catalogue" />
             <Link
               href="/products"
               className="hidden rounded-md bg-navy-900 px-5 py-2.5 text-sm font-semibold text-cream-100 hover:bg-navy-800 sm:block"
@@ -207,15 +200,10 @@ export default async function HomePage() {
 
       {/* ════════ Latest Products ════════ */}
       {products.length > 0 && (
-        <section className="section-watermark bg-cream-100">
+        <section className="bg-cream-100">
           <div className="mx-auto max-w-7xl px-4 pb-14 sm:pb-20">
             <div className="mb-8 flex items-end justify-between">
-              <div>
-                <SectionLabel>Latest Products</SectionLabel>
-                <h2 className="font-[family-name:var(--font-outfit)] text-3xl font-bold text-navy-900 sm:text-4xl">
-                  Recently added
-                </h2>
-              </div>
+              <PageHeading eyebrow="Latest Products" title="Recently added" />
               <Link href="/products" className="hidden rounded-md bg-navy-900 px-5 py-2.5 text-sm font-semibold text-cream-100 hover:bg-navy-800 sm:block">
                 View all
               </Link>

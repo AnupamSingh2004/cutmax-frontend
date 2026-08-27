@@ -4,6 +4,7 @@ import { useState } from "react";
 import { apiFetch } from "@/lib/api-client";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { PageHeading } from "@/components/ui/PageHeading";
 
 export default function ContactPage() {
   const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-3xl font-bold text-navy-900">Contact Us</h1>
+      <PageHeading level="h1" eyebrow="Get In Touch" title="Contact Us" />
       <div className="mt-6 grid grid-cols-1 gap-2 text-muted sm:grid-cols-2">
         <p>Plot 12, Industrial Estate, Pune, Maharashtra, India</p>
         <p>GSTIN: 27ABCDE1234F1Z5</p>

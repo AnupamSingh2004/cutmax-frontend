@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/storefront/ProductCard";
 import { FilterSidebar, type Filters } from "@/components/storefront/FilterSidebar";
 import { ProductCardSkeleton } from "@/components/ui/Skeleton";
 import { Pagination } from "@/components/ui/Pagination";
+import { PageHeading } from "@/components/ui/PageHeading";
 
 interface ProductsResponse {
   products: Product[];
@@ -82,7 +83,12 @@ function ProductsPageInner() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="mb-6 text-2xl font-bold text-navy-900">{q ? `Search results for "${q}"` : "All Products"}</h1>
+      <PageHeading
+        level="h1"
+        eyebrow="Catalogue"
+        title={q ? `Search results for "${q}"` : "All Products"}
+        className="mb-6"
+      />
       <div className="flex flex-col gap-8 sm:flex-row">
         <FilterSidebar filters={filters} brands={data?.brands ?? []} onChange={updateFilters} />
 
