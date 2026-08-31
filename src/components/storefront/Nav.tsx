@@ -11,7 +11,6 @@ import { useCustomerSession } from "@/lib/session";
 
 const WHATSAPP_NUMBER = "918856828894";
 const PHONE1 = "+91 8856828894";
-const PHONE2 = "+91 9699192248";
 const EMAIL = "officecutmax@gmail.com";
 const ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune - 411062";
 
@@ -47,58 +46,51 @@ export function Nav() {
   return (
     <>
       {/* ── Top contact bar ── */}
-      <div className="hidden bg-navy-950 py-2 text-xs text-cream-100/80 lg:block">
+      <div className="hidden bg-navy-950 py-2.5 text-[13px] text-white/72 lg:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
           <div className="flex items-center gap-5">
-            <span className="flex items-center gap-1.5">
-              <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              {ADDRESS}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-              {EMAIL}
-            </span>
+            <span>{ADDRESS}</span>
           </div>
           <div className="flex items-center gap-5">
-            <span className="flex items-center gap-1.5">
-              <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-              {PHONE1}
-            </span>
-            <span className="text-cream-100/40">|</span>
-            <span className="flex items-center gap-1.5">{PHONE2}</span>
+            <span>{EMAIL}</span>
+            <span>{PHONE1}</span>
           </div>
         </div>
       </div>
 
       {/* ── Main header ── */}
-      <header className="sticky top-0 z-40 border-b border-border bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+      <header className="sticky top-0 z-40 border-b border-border bg-white">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
           {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center gap-2">
-            <Image src="/logo.png" alt="CutMax Technologies" width={160} height={50} className="h-10 w-auto" priority />
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <Image src="/logo.png" alt="CutMax Technologies" width={160} height={50} className="h-9 w-auto" priority />
+            <div className="hidden sm:block">
+              <div className="font-display text-[19px] font-extrabold leading-none tracking-tight text-navy-900">CUTMAX</div>
+              <div className="mt-0.5 text-[10px] tracking-[0.13em] text-muted">TECHNOLOGIES</div>
+            </div>
           </Link>
 
           {/* All Categories + Search — unified container */}
           <div className="relative hidden flex-1 items-center md:flex" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex shrink-0 items-center gap-2 rounded-l-md bg-navy-900 px-5 py-2.5 text-sm font-semibold text-cream-100 hover:bg-navy-800"
+              className="flex shrink-0 items-center gap-2 rounded-l-[3px] border border-r border-border bg-[#EDEEF1] px-3.5 py-3 text-[13px] font-semibold text-navy-900 hover:bg-border"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
               All Categories
               <svg className={`h-3 w-3 transition-transform ${menuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
             </button>
-            <form onSubmit={onSearch} className="flex flex-1 items-center">
+            <form onSubmit={onSearch} className="flex flex-1 items-center border-y border-border bg-bg-soft">
+              <svg className="ml-3 h-4 w-4 shrink-0 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="7" /><path strokeLinecap="round" d="M21 21l-4.35-4.35" /></svg>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for products, categories, SKU..."
-                className="w-full border-y border-l border-border bg-white px-4 py-2.5 text-sm focus:outline-none"
+                placeholder="Search end mills, categories, SKU…"
+                className="w-full bg-transparent px-3 py-3 text-sm focus:outline-none"
               />
-              <button type="submit" className="flex shrink-0 items-center justify-center rounded-r-md border border-l-0 border-border bg-navy-900 px-4 py-2.5 text-cream-100 hover:bg-navy-800">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              </button>
             </form>
+            <button type="submit" onClick={onSearch} className="flex shrink-0 items-center rounded-r-[3px] bg-navy-900 px-5 py-3 text-[13.5px] font-bold text-white transition-colors hover:bg-navy-700">
+              Search
+            </button>
             {menuOpen && (
               <MegaMenu
                 onNavigate={() => { setMenuOpen(false); setQuery(""); }}
@@ -108,34 +100,28 @@ export function Nav() {
           </div>
 
           {/* Right actions */}
-          <nav className="ml-auto flex items-center gap-2 text-sm font-medium text-navy-900 sm:gap-3">
+          <nav className="ml-auto flex items-center gap-2.5 text-sm font-medium text-navy-900 sm:gap-2.5">
             <Link
               href={customer ? "/account/my-enquiries" : "/account/login"}
-              className="hidden items-center gap-1.5 rounded-md border border-border px-3 py-2 hover:bg-bg-soft sm:flex"
+              className="hidden items-center gap-1.5 rounded-[3px] border border-border bg-bg-soft px-3.5 py-2.5 text-[13.5px] font-semibold hover:bg-border sm:flex"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
               {customer ? "My Enquiries" : "Sign In"}
-              {!customer && (
-                <span className="ml-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-navy-900 text-[10px] font-bold text-cream-100">0</span>
-              )}
             </Link>
 
             <button
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-1.5 rounded-md border border-border px-3 py-2 hover:bg-bg-soft"
+              className="relative flex items-center gap-1.5 rounded-[3px] border border-border bg-bg-soft px-3.5 py-2.5 text-[13.5px] font-semibold transition-colors hover:bg-border"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" /></svg>
-              Cart
-              <span className="ml-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-navy-900 text-[10px] font-bold text-cream-100">
-                {count}
-              </span>
+              <svg className="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="none"><path d="M4 6h16l-1.5 10h-13z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /><circle cx="9" cy="20" r="1.4" fill="currentColor" /><circle cx="17" cy="20" r="1.4" fill="currentColor" /></svg>
+              Enquiry Bag
+              <span className="rounded-[3px] bg-red-600 px-1.5 py-0.5 text-[11px] font-extrabold text-white">{count}</span>
             </button>
 
             <Link
-              href="/admin"
-              className="hidden rounded-md border border-navy-900 bg-navy-900 px-4 py-2 text-sm font-semibold text-cream-100 hover:bg-navy-800 sm:block"
+              href="/contact"
+              className="rounded-[3px] bg-red-600 px-4.5 py-2.5 text-[13.5px] font-bold text-white transition-colors hover:bg-red-700"
             >
-              Admin Login
+              Request a Quote
             </Link>
 
             <button className="md:hidden" onClick={() => setMobileOpen((v) => !v)} aria-label="Menu">
@@ -144,35 +130,23 @@ export function Nav() {
           </nav>
         </div>
 
-        {/* ── Secondary nav bar — thicker, more prominent ── */}
+        {/* ── Secondary nav bar — dark navy strip ── */}
         <div className="hidden bg-navy-900 md:block">
-          <div className="mx-auto flex max-w-7xl items-center px-4">
-            {/* ALL CATEGORIES button — left edge */}
-            <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="flex shrink-0 items-center gap-2 bg-navy-800 px-5 py-2.5 text-sm font-bold tracking-wide text-cream-100 hover:bg-navy-700"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
-              ALL CATEGORIES
-            </button>
+          <div className="mx-auto flex max-w-7xl items-center gap-8 px-4 py-3.5 text-sm font-semibold text-white/75">
+            <Link href="/" className="hover:text-white">Home</Link>
+            <Link href="/products" className="hover:text-white">Products</Link>
+            <Link href="/about" className="hover:text-white">About</Link>
+            <Link href="/contact" className="hover:text-white">Contact</Link>
+            <Link href="/admin" className="hover:text-white">Admin Login</Link>
 
-            {/* Nav links */}
-            <div className="flex items-center gap-0.5 pl-2 text-[13px] font-bold uppercase tracking-wide text-cream-100">
-              <Link href="/" className="rounded px-4 py-2.5 hover:bg-white/10">HOME</Link>
-              <Link href="/products" className="rounded px-4 py-2.5 hover:bg-white/10">PRODUCTS</Link>
-              <Link href="/about" className="rounded px-4 py-2.5 hover:bg-white/10">ABOUT US</Link>
-              <Link href="/contact" className="rounded px-4 py-2.5 hover:bg-white/10">CONTACT US</Link>
-              <span className="rounded px-4 py-2.5 text-cream-100/50 cursor-default">DOWNLOAD CATALOGUE</span>
-            </div>
-
-            {/* WhatsApp button — right edge */}
+            {/* WhatsApp link — right edge */}
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20CutMax%2C%20I%27m%20interested%20in%20your%20products.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-auto flex shrink-0 items-center gap-2 rounded bg-green-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-green-600"
+              className="ml-auto flex shrink-0 items-center gap-1.5 font-bold text-green-500 transition-colors hover:text-green-600"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M8 12a1 1 0 001 1h1a1 1 0 001-1V9a1 1 0 00-1-1H9a1 1 0 00-1 1v3z"/></svg>
+              <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.43-4.4-1.18l-.32-.19-3.13.82.84-3.05-.2-.32A7.93 7.93 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.4-5.6c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.44-1.34-1.68-.14-.24-.02-.38.1-.5.12-.12.28-.32.4-.48.14-.16.18-.28.28-.46.1-.18.02-.34-.06-.46-.08-.12-.5-1.2-.68-1.64-.18-.42-.36-.36-.5-.36-.12 0-.28-.02-.44-.02-.16 0-.4.06-.6.28-.2.22-.78.76-.78 1.84 0 1.08.78 2.14.88 2.28.1.14 1.5 2.28 3.66 3.12 1.82.7 2.2.56 2.6.52.4-.04 1.3-.52 1.48-1.02.18-.5.18-.94.12-1.02-.06-.1-.22-.16-.46-.28z"/></svg>
               WhatsApp Us
             </a>
           </div>
@@ -185,7 +159,7 @@ export function Nav() {
             <div className="mb-3 flex">
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="flex shrink-0 items-center gap-2 rounded-l-md bg-navy-900 px-4 py-2.5 text-sm font-semibold text-cream-100"
+                className="flex shrink-0 items-center gap-2 rounded-l-md bg-navy-900 px-4 py-2.5 text-sm font-semibold text-white"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
                 All
@@ -197,7 +171,7 @@ export function Nav() {
                   placeholder="Search for products, categories, SKU..."
                   className="w-full border border-l-0 border-border px-4 py-2.5 text-sm focus:outline-none"
                 />
-                <button type="submit" className="flex shrink-0 items-center justify-center rounded-r-md border border-l-0 border-border bg-navy-900 px-3 text-cream-100">
+                <button type="submit" className="flex shrink-0 items-center justify-center rounded-r-md border border-l-0 border-border bg-navy-900 px-3 text-white">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </button>
               </form>

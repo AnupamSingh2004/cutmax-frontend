@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { TAXONOMY } from "@/lib/taxonomy";
 import { API_BASE } from "@/lib/api-client";
+import { productImageSrc } from "@/lib/product-image";
 import type { Product, PublicSettings } from "@/lib/types";
 import { PageHeading } from "@/components/ui/PageHeading";
 
@@ -21,7 +22,7 @@ async function getProducts(): Promise<ProductsResponse> {
     });
     if (!res.ok) return empty;
     const data = await res.json();
-    return { products: data.products ?? [], total: 0, settings: data.settings ?? empty.settings };
+    return { products: data.products ?? [], total: data.total ?? 0, settings: data.settings ?? empty.settings };
   } catch {
     return empty;
   }
@@ -35,226 +36,194 @@ function countByCategory(products: Product[]): Record<string, number> {
   return counts;
 }
 
+const STEPS = [
+  { number: "01", title: "Browse the catalogue", desc: "Search live SKUs by category, brand or specification." },
+  { number: "02", title: "Build your enquiry bag", desc: "Add line items and review quantities and GST-inclusive pricing." },
+  { number: "03", title: "Send on WhatsApp", desc: "Your enquiry goes straight to the Cutmax sales team." },
+  { number: "04", title: "Confirm with invoice", desc: "Get a GST-ready quote and confirm your order." },
+];
+
 export default async function HomePage() {
   const { products, total, settings } = await getProducts();
   const categoryCounts = countByCategory(products);
+  const skuCount = total || products.length;
+  const featured = products.slice(0, 4);
 
   return (
     <div>
-      {/* ════════ Hero Section ════════ */}
+      {/* ════════ Hero ════════ */}
       <section
         className="relative overflow-hidden"
-        style={{
-          background:
-            "radial-gradient(circle at 75% 25%, rgba(232,226,214,.18), transparent 45%), linear-gradient(120deg, var(--color-navy-950), var(--color-navy-700))",
-        }}
+        style={{ background: "linear-gradient(155deg,#0E1830 0%,#162650 55%,#1B2E5C 100%)" }}
       >
-        {/* Soft pulsing ring, top-right */}
         <div className="hero-pulse-ring" />
-
-        <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-14 sm:py-16 lg:grid-cols-2 lg:py-20">
-          {/* Left — Copy */}
-          <div className="text-cream-100">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="h-px w-8 bg-cream-300"></span>
-              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-cream-300">
-                B2B Industrial Catalogue
-              </span>
+        <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-14 sm:py-16 lg:grid-cols-2 lg:py-[88px]">
+          <div>
+            <div className="mb-5 flex items-center gap-2.5">
+              <span className="h-[2px] w-7 bg-red-600" />
+              <span className="text-[13px] font-bold tracking-[0.14em] text-orange-500">B2B INDUSTRIAL CATALOGUE</span>
             </div>
-            <h1 className="text-[2.5rem] font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
-              Industrial Products.
-              <br />
-              Reliable Supply.
-              <br />
-              <span className="text-cream-300">Easy Enquiry.</span>
+            <h1 className="font-display text-[2.1rem] font-extrabold leading-[1.1] tracking-tight text-white sm:text-[2.6rem] lg:text-[3.375rem]">
+              Precision cutting tools, sourced without friction.
             </h1>
-            <p className="mt-5 max-w-md text-[0.95rem] leading-relaxed text-cream-100/65 sm:text-base">
-              Browse the complete Cutmax catalogue, build an enquiry cart, review
-              GST and send the requirement directly to our WhatsApp sales team.
+            <p className="mt-5 max-w-lg text-[17.5px] leading-relaxed text-white/68">
+              Cutmax Technologies supplies end mills, carbide inserts, tool holders and adapters for CNC machine shops across India. Browse live inventory, add what you need, and send the requirement straight to our sales team.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 rounded-md border-2 border-cream-300 bg-transparent px-6 py-3 text-sm font-semibold text-cream-300 transition-colors hover:bg-cream-300 hover:text-navy-900"
-              >
+            <div className="mt-9 flex flex-wrap gap-3.5">
+              <Link href="/products" className="rounded-[3px] bg-white px-7 py-[15px] text-[15px] font-bold text-navy-900 transition-colors hover:bg-border">
                 Browse Catalogue
               </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-semibold text-navy-900 transition-colors hover:bg-cream-200"
-              >
+              <Link href="/contact" className="rounded-[3px] border-[1.5px] border-white/40 px-7 py-[15px] text-[15px] font-bold text-white transition-colors hover:border-white/70 hover:bg-white/10">
                 Request a Quote
               </Link>
             </div>
+            <div className="mt-12 flex flex-wrap gap-10 border-t border-white/14 pt-7">
+              <div>
+                <div className="font-display text-[28px] font-bold text-white">{skuCount}+</div>
+                <div className="mt-1 text-[13px] text-white/55">SKUs in live inventory</div>
+              </div>
+              <div>
+                <div className="font-display text-[28px] font-bold text-white">{TAXONOMY.length}</div>
+                <div className="mt-1 text-[13px] text-white/55">Product categories</div>
+              </div>
+              <div>
+                <div className="font-display text-[28px] font-bold text-white">GST-ready</div>
+                <div className="mt-1 text-[13px] text-white/55">Invoicing on every quote</div>
+              </div>
+            </div>
           </div>
 
-          {/* Right — Precision tooling video panel */}
           <div className="relative hidden lg:block">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-card-sm bg-navy-800">
-              <video
-                className="absolute inset-0 h-full w-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-              >
+            <div className="absolute -right-6 -top-6 h-full w-full rounded-[4px] border-[1.5px] border-red-600/30" />
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[4px]" style={{ boxShadow: "0 30px 60px -20px rgba(0,0,0,0.5)" }}>
+              <video className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata">
                 <source src={settings.hero_video_url || "/videos/products-hero.mp4"} type="video/mp4" />
               </video>
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(4,5,7,.08), rgba(4,5,7,.68)), linear-gradient(90deg, rgba(232,226,214,.2), transparent 46%)",
-                }}
-              />
-              <div className="absolute bottom-0 left-0 p-7">
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cream-300/70">Cutmax Technologies</p>
-                <p className="mt-1 text-base font-bold uppercase tracking-wider text-cream-100">Precision CNC Tooling</p>
-                <p className="mt-0.5 text-[10px] uppercase tracking-[0.25em] text-cream-100/50">Engineered for Performance</p>
-              </div>
+              <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(4,5,7,.08), rgba(4,5,7,.68))" }} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ════════ Why Cutmax — Built for industrial procurement ════════ */}
-      <section className="bg-cream-100">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:py-20">
-          <PageHeading eyebrow="Why Cutmax" title="Built for industrial procurement" className="mb-10" />
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      {/* ════════ Why Cutmax ════════ */}
+      <section className="bg-bg-soft">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:py-24">
+          <PageHeading eyebrow="Why Cutmax" title="Built for industrial procurement, not retail browsing." className="mb-14 max-w-xl" />
+          <div className="grid grid-cols-1 gap-7 sm:grid-cols-3">
             {[
-              {
-                title: "Complete catalogue",
-                desc: `${total || "200+"} precision cutting-tool records — End Mills, Carbide Inserts, Tool Holders, Milling Cutters and Spares from your live inventory.`,
-              },
-              {
-                title: "Enquiry-first checkout",
-                desc: "Select products, calculate GST, then continue to WhatsApp.",
-              },
-              {
-                title: "Bulk Excel import",
-                desc: "Upload many products at once, including image URLs.",
-              },
+              { title: "Complete live catalogue", desc: `${skuCount || "200+"} precision cutting-tool records across End Mills, Carbide Inserts, Tool Holders and more, tracked from live stock.` },
+              { title: "Enquiry-first workflow", desc: "Add what you need to an enquiry bag, review GST-inclusive pricing, and send it straight to our sales team on WhatsApp." },
+              { title: "Built for bulk buyers", desc: "Multi-line requirements, repeat orders and distributor accounts, backed by GST-registered invoicing on every quote." },
             ].map((f) => (
-              <div key={f.title} className="rounded-card-sm border border-border bg-white p-6 shadow-card">
-                <h3 className="mb-2 text-lg font-bold text-navy-900">{f.title}</h3>
-                <p className="text-sm leading-relaxed text-muted">{f.desc}</p>
+              <div key={f.title} className="rounded-[4px] border-t-[3px] border-red-600 bg-white p-9 pt-8">
+                <h3 className="font-display mb-3 text-[19px] font-bold text-navy-900">{f.title}</h3>
+                <p className="text-[15px] leading-relaxed text-muted-soft">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ════════ Shop by Category ════════ */}
-      <section className="bg-cream-100">
-        <div className="mx-auto max-w-7xl px-4 pb-14 sm:pb-20">
-          <div className="mb-8 flex items-end justify-between">
-            <PageHeading eyebrow="Shop by Category" title="Browse the catalogue" />
-            <Link
-              href="/products"
-              className="hidden rounded-md bg-navy-900 px-5 py-2.5 text-sm font-semibold text-cream-100 hover:bg-navy-800 sm:block"
-            >
-              View all products
+      {/* ════════ Product Range ════════ */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:py-24">
+          <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+            <PageHeading eyebrow="Product Range" title="Browse the catalogue by category" />
+            <Link href="/products" className="hidden rounded-[3px] bg-navy-900 px-6 py-3.5 text-[14.5px] font-bold text-white transition-colors hover:bg-navy-700 sm:block">
+              View all products →
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {TAXONOMY.map((category) => {
-              const count = categoryCounts[category.name] ?? 0;
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {TAXONOMY.map((cat) => {
+              const count = categoryCounts[cat.name] ?? 0;
               return (
                 <Link
-                  key={category.name}
-                  href={`/products?category=${encodeURIComponent(category.name)}`}
-                  className="group flex flex-col overflow-hidden rounded-card-sm border border-border bg-white shadow-card transition-all hover:shadow-card-hover hover:border-navy-200"
+                  key={cat.name}
+                  href={`/products?category=${encodeURIComponent(cat.name)}`}
+                  className="block rounded-[4px] bg-bg-soft p-7 transition-colors hover:bg-border"
                 >
-                  {category.image && (
-                    <div className="relative aspect-[4/3] bg-bg-soft">
-                      <Image
-                        src={category.image}
-                        alt={category.name}
-                        fill
-                        sizes="(max-width: 640px) 50vw, 280px"
-                        className="object-contain p-4 transition-transform group-hover:scale-105"
-                      />
-                    </div>
-                  )}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-navy-900 group-hover:text-navy-700">{category.name}</h3>
-                    <div className="mt-1 flex items-center justify-between">
-                      <span className="text-xs text-muted">
-                        {count > 0 ? `${count} Products` : `${category.subCategories.length} sub-categories`}
-                      </span>
-                      <span className="text-xs font-medium text-navy-700 group-hover:underline">Browse →</span>
-                    </div>
+                  <div className="mb-2.5 flex items-baseline justify-between gap-3">
+                    <span className="font-display text-[17px] font-bold text-navy-900">{cat.name}</span>
+                    <span className="whitespace-nowrap text-xs font-bold text-red-600">{count > 0 ? `${count} SKUs` : "Enquire"}</span>
                   </div>
+                  <div className="mb-4 text-[13.5px] leading-relaxed text-muted-soft">{cat.subCategories.join(" · ")}</div>
+                  <div className="text-[13.5px] font-bold text-navy-900">Browse category →</div>
                 </Link>
               );
             })}
           </div>
-          <Link
-            href="/products"
-            className="mt-6 inline-flex rounded-md bg-navy-900 px-5 py-2.5 text-sm font-semibold text-cream-100 hover:bg-navy-800 sm:hidden"
-          >
-            View all products
-          </Link>
         </div>
       </section>
 
-      {/* ════════ Latest Products ════════ */}
-      {products.length > 0 && (
-        <section className="bg-cream-100">
-          <div className="mx-auto max-w-7xl px-4 pb-14 sm:pb-20">
-            <div className="mb-8 flex items-end justify-between">
-              <PageHeading eyebrow="Latest Products" title="Recently added" />
-              <Link href="/products" className="hidden rounded-md bg-navy-900 px-5 py-2.5 text-sm font-semibold text-cream-100 hover:bg-navy-800 sm:block">
-                View all
-              </Link>
+      {/* ════════ Featured products ════════ */}
+      {featured.length > 0 && (
+        <section className="bg-bg-soft">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:py-24">
+            <div className="mb-3 flex items-center gap-2.5">
+              <span className="h-[2px] w-7 bg-red-600" />
+              <span className="text-[13px] font-bold tracking-[0.14em] text-red-600">IN STOCK NOW</span>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {products.slice(0, 8).map((p) => (
-                <Link
-                  key={p.sku}
-                  href={`/products/${p.sku}`}
-                  className="rounded-card-sm border border-border bg-white p-4 shadow-card transition-all hover:shadow-card-hover hover:border-navy-200"
-                >
-                  <p className="truncate font-semibold text-navy-900">{p.name}</p>
-                  <p className="mt-0.5 text-xs text-muted">{p.subCategory}</p>
-                  <div className="mt-3 flex items-center justify-between">
-                    <p className="font-bold text-navy-900">₹{p.price.toFixed(2)}</p>
-                    <span className="text-[10px] uppercase tracking-wide text-muted">{p.unit}</span>
-                  </div>
-                </Link>
-              ))}
+            <h2 className="font-display mb-12 text-[1.75rem] font-bold text-navy-900 sm:text-[2.375rem]">Featured from the catalogue</h2>
+            <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+              {featured.map((p) => {
+                const low = p.stock <= settings.low_stock;
+                return (
+                  <Link key={p.sku} href={`/products/${p.sku}`} className="block overflow-hidden rounded-[4px] bg-white transition-transform hover:-translate-y-1">
+                    <div className="relative aspect-square bg-bg-soft">
+                      <Image src={productImageSrc(p)} alt={p.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-contain p-4" />
+                      <div className="absolute left-3 top-3 rounded-[3px] bg-navy-900 px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-white">
+                        {p.brand}
+                      </div>
+                      <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-[3px] bg-white/92 px-2.5 py-1 text-[10.5px] font-bold" style={{ color: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }}>
+                        <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }} />
+                        {low ? "LOW STOCK" : "IN STOCK"}
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <div className="mb-1.5 text-[11px] font-bold tracking-wide text-red-600">{p.subCategory}</div>
+                      <div className="font-display mb-1 truncate text-[15.5px] font-semibold text-navy-900">{p.name}</div>
+                      <div className="mb-3.5 text-[12.5px] text-muted">SKU {p.sku}</div>
+                      <div className="flex items-center justify-between gap-2.5">
+                        <span className="font-display text-lg font-bold text-navy-900">₹{p.price.toFixed(2)}</span>
+                        <span className="rounded-[3px] bg-navy-900 px-3.5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-navy-700">View</span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
       )}
 
-      {/* ════════ CTA Banner ════════ */}
+      {/* ════════ 4-step process ════════ */}
       <section className="bg-navy-900">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-12 text-center text-cream-100 sm:flex-row sm:justify-between sm:text-left">
-          <div>
-            <h2 className="text-xl font-bold">Need a custom quote?</h2>
-            <p className="mt-1 text-sm text-cream-100/70">Talk to our team for bulk orders and special configurations.</p>
-          </div>
-          <div className="flex gap-3">
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20CutMax%2C%20I%20need%20a%20custom%20quote.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md bg-green-500 px-6 py-3 text-sm font-semibold text-white hover:bg-green-600"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-              WhatsApp Us
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 rounded-md border border-cream-100/30 px-6 py-3 text-sm font-semibold text-cream-100 hover:bg-white/10"
-            >
-              Contact Us
-            </Link>
-          </div>
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-16 sm:grid-cols-4 sm:py-[88px]">
+          {STEPS.map((step) => (
+            <div key={step.number}>
+              <div className="font-display mb-4 text-[32px] font-bold text-orange-500">{step.number}</div>
+              <div className="font-display mb-2.5 text-[17px] font-semibold text-white">{step.title}</div>
+              <div className="text-sm leading-relaxed text-white/60">{step.desc}</div>
+            </div>
+          ))}
         </div>
+      </section>
+
+      {/* ════════ WhatsApp CTA banner ════════ */}
+      <section className="flex flex-wrap items-center justify-between gap-8 bg-red-600 px-4 py-12 sm:px-12">
+        <div>
+          <h3 className="font-display mb-2 text-[28px] font-bold text-white">Have a bulk requirement?</h3>
+          <p className="text-[15.5px] text-white/92">Send your specification straight to our sales team on WhatsApp and get a GST-ready quote back.</p>
+        </div>
+        <a
+          href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Cutmax%20Technologies%2C%20I%20have%20a%20bulk%20requirement.`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-[3px] bg-navy-900 px-8 py-4 text-[15.5px] font-bold text-white transition-colors hover:bg-navy-700"
+        >
+          <svg className="h-[19px] w-[19px]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.07-1.32A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.43-4.4-1.18l-.32-.19-3.13.82.84-3.05-.2-.32A7.93 7.93 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.4-5.6c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.44-1.34-1.68-.14-.24-.02-.38.1-.5.12-.12.28-.32.4-.48.14-.16.18-.28.28-.46.1-.18.02-.34-.06-.46-.08-.12-.5-1.2-.68-1.64-.18-.42-.36-.36-.5-.36-.12 0-.28-.02-.44-.02-.16 0-.4.06-.6.28-.2.22-.78.76-.78 1.84 0 1.08.78 2.14.88 2.28.1.14 1.5 2.28 3.66 3.12 1.82.7 2.2.56 2.6.52.4-.04 1.3-.52 1.48-1.02.18-.5.18-.94.12-1.02-.06-.1-.22-.16-.46-.28z" /></svg>
+          Message on WhatsApp
+        </a>
       </section>
     </div>
   );

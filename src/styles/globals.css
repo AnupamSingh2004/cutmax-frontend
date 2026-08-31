@@ -1,43 +1,55 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), "Segoe UI", Arial, sans-serif;
+  --font-sans: var(--font-work-sans), "Segoe UI", Arial, sans-serif;
+  --font-display: var(--font-manrope), var(--font-work-sans), "Segoe UI", Arial, sans-serif;
 
-  /* Navy — headers, footer, admin nav, hero gradient */
-  --color-navy-950: #061029;
-  --color-navy-900: #0c2050;
-  --color-navy-800: #0e1c3c;
-  --color-navy-700: #122c63;
+  /* Navy — headers, footer, hero gradient, primary buttons */
+  --color-navy-950: #0e1830;
+  --color-navy-900: #12203f;
+  --color-navy-800: #162650;
+  --color-navy-700: #28407d;
 
-  /* Cream/beige — primary accent + CTA color (NOT literal red, despite the old --red var name) */
+  /* Red — primary CTA / brand accent (the literal Cutmax red) */
+  --color-red-600: #e31e24;
+  --color-red-700: #c71b20;
+  --color-red-800: #b3151a;
+
+  /* Orange — eyebrow labels, step numbers */
+  --color-orange-500: #f4901e;
+  --color-orange-600: #c97a0e;
+
+  /* WhatsApp green */
+  --color-green-500: #3adc7f;
+  --color-green-600: #6be8a0;
+
+  /* Cream — retained for the admin panel only (not used by the redesigned storefront) */
   --color-cream-100: #f3efe6;
   --color-cream-200: #ece5d6;
   --color-cream-300: #e8e2d6;
   --color-cream-400: #ddd3bf;
 
-  --color-muted: #68717b;
-  --color-muted-soft: #59616c;
-  --color-line: #e5e7eb;
-  --color-border: #e1e4e8;
+  /* In-stock green (distinct from WhatsApp green) */
+  --color-stock-in: #227a4b;
+  --color-stock-low: #c97a0e;
+
+  --color-muted: #8a93a6;
+  --color-muted-soft: #5b6478;
+  --color-line: #e4e6eb;
+  --color-border: #e4e6eb;
   --color-surface: #ffffff;
-  --color-bg-soft: #f7f7f8;
+  --color-bg-soft: #f4f5f7;
 
-  /* Orange accent — WhatsApp, CTAs, highlights */
-  --color-orange-500: #F97316;
-  --color-orange-600: #EA580C;
-  --color-green-500: #25D366;
-  --color-green-600: #128C7E;
+  --radius-card-sm: 3px;
+  --radius-card-lg: 4px;
 
-  --radius-card-sm: 8px;
-  --radius-card-lg: 12px;
-
-  --shadow-card: 0 1px 2px rgba(12, 32, 80, 0.04), 0 8px 24px rgba(12, 32, 80, 0.06);
-  --shadow-card-hover: 0 4px 10px rgba(12, 32, 80, 0.08), 0 16px 40px rgba(12, 32, 80, 0.1);
+  --shadow-card: 0 1px 2px rgba(18, 32, 63, 0.04), 0 8px 24px rgba(18, 32, 63, 0.06);
+  --shadow-card-hover: 0 16px 28px -12px rgba(18, 32, 63, 0.22);
 }
 
 body {
   background: var(--color-bg-soft);
-  color: var(--color-navy-800);
+  color: var(--color-navy-900);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -78,10 +90,10 @@ body {
   width: 360px;
   height: 360px;
   border-radius: 50%;
-  border: 1px solid rgba(232, 226, 214, 0.17);
+  border: 1px solid rgba(227, 30, 36, 0.25);
   box-shadow:
-    0 0 0 35px rgba(232, 226, 214, 0.025),
-    0 0 0 70px rgba(232, 226, 214, 0.012);
+    0 0 0 35px rgba(255, 255, 255, 0.02),
+    0 0 0 70px rgba(255, 255, 255, 0.01);
   animation: heroPulse 5s ease-in-out infinite;
   pointer-events: none;
 }

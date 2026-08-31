@@ -8,7 +8,6 @@ import { ProductCard } from "@/components/storefront/ProductCard";
 import { FilterSidebar, type Filters } from "@/components/storefront/FilterSidebar";
 import { ProductCardSkeleton } from "@/components/ui/Skeleton";
 import { Pagination } from "@/components/ui/Pagination";
-import { PageHeading } from "@/components/ui/PageHeading";
 
 interface ProductsResponse {
   products: Product[];
@@ -20,6 +19,16 @@ interface ProductsResponse {
 }
 
 const PER_PAGE = 24;
+const WHATSAPP_NUMBER = "918856828894";
+
+const SORT_OPTIONS = [
+  { value: "newest", label: "Sort: Newest" },
+  { value: "name", label: "Name: A–Z" },
+  { value: "name_desc", label: "Name: Z–A" },
+  { value: "price", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
+  { value: "stock_desc", label: "Stock: High to Low" },
+];
 
 function ProductsPageInner() {
   const router = useRouter();
@@ -33,9 +42,13 @@ function ProductsPageInner() {
   };
   const q = searchParams.get("q") ?? "";
   const page = Number(searchParams.get("page") ?? 1);
+  const [searchInput, setSearchInput] = useState(q);
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   const [data, setData] = useState<ProductsResponse | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => setSearchInput(q), [q]);
 
   useEffect(() => {
     setLoading(true);
@@ -73,6 +86,15 @@ function ProductsPageInner() {
     router.push(`/products?${params.toString()}`);
   }
 
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchInput) params.set("q", searchInput);
+    else params.delete("q");
+    params.delete("page");
+    router.push(`/products?${params.toString()}`);
+  }
+
   function goToPage(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", String(nextPage));
@@ -80,39 +102,87 @@ function ProductsPageInner() {
   }
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.per_page)) : 1;
+  const visibleProducts = inStockOnly ? (data?.products ?? []).filter((p) => p.stock > 0) : data?.products ?? [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <PageHeading
-        level="h1"
-        eyebrow="Catalogue"
-        title={q ? `Search results for "${q}"` : "All Products"}
-        className="mb-6"
-      />
-      <div className="flex flex-col gap-8 sm:flex-row">
+    <div>
+      <div className="bg-navy-900 px-4 py-9 sm:px-12">
+        <div className="mb-2.5 flex items-center gap-2.5">
+          <span className="h-[2px] w-6 bg-red-600" />
+          <span className="text-[12.5px] font-bold tracking-[0.14em] text-orange-500">PRODUCT CATALOGUE</span>
+        </div>
+        <h1 className="font-display text-[1.65rem] font-extrabold text-white sm:text-[2.125rem]">
+          {data ? `${data.total} SKUs, organized for procurement.` : "Loading catalogue…"}
+        </h1>
+      </div>
+
+      <div className="mx-auto flex max-w-7xl flex-wrap items-start gap-7 px-4 py-9 sm:px-12">
         <FilterSidebar filters={filters} brands={data?.brands ?? []} onChange={updateFilters} />
 
-        <div className="flex-1">
+        <main className="min-w-0 flex-1">
+          <div className="sticky top-20 z-10 mb-5 flex flex-wrap items-center gap-3 rounded-[4px] bg-white p-3.5" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
+            <form onSubmit={submitSearch} className="flex min-w-[220px] flex-1 items-center rounded-[3px] bg-bg-soft">
+              <svg className="ml-3 h-4 w-4 shrink-0 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="7" /><path strokeLinecap="round" d="M21 21l-4.35-4.35" /></svg>
+              <input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search within catalogue…"
+                className="w-full bg-transparent px-2.5 py-2.5 text-sm focus:outline-none"
+              />
+            </form>
+            <select
+              value={filters.sort}
+              onChange={(e) => updateFilters({ sort: e.target.value })}
+              className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] text-navy-900"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <button
+              onClick={() => setInStockOnly((v) => !v)}
+              className="whitespace-nowrap rounded-[3px] border px-3.5 py-2.5 text-[13.5px] font-semibold transition-colors"
+              style={inStockOnly ? { background: "var(--color-navy-900)", color: "#fff", borderColor: "var(--color-navy-900)" } : { background: "#fff", color: "var(--color-navy-900)", borderColor: "var(--color-border)" }}
+            >
+              In stock only
+            </button>
+            <div className="ml-auto whitespace-nowrap text-[13.5px] text-muted-soft">
+              {data ? `${visibleProducts.length} of ${data.total} shown` : ""}
+            </div>
+          </div>
+
           {loading ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
-          ) : !data || !data.products || data.products.length === 0 ? (
-            <p className="text-muted">No products found. Try adjusting your filters.</p>
+          ) : visibleProducts.length === 0 ? (
+            <div className="rounded-[4px] bg-white px-10 py-14 text-center">
+              <div className="font-display mb-2.5 text-[19px] font-bold text-navy-900">No matches found</div>
+              <p className="mx-auto mb-6 max-w-md text-[14.5px] leading-relaxed text-muted-soft">
+                Try a different search term or filter, or send us your specification directly.
+              </p>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block rounded-[3px] bg-red-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700"
+              >
+                Enquire on WhatsApp
+              </a>
+            </div>
           ) : (
             <>
-              <p className="mb-4 text-sm text-muted">{data.total} products found</p>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                {data.products.map((p) => (
-                  <ProductCard key={p.id} product={p} lowStockLimit={data.settings.low_stock} />
+              <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+                {visibleProducts.map((p) => (
+                  <ProductCard key={p.id} product={p} lowStockLimit={data!.settings.low_stock} />
                 ))}
               </div>
               <Pagination page={page} totalPages={totalPages} onChange={goToPage} />
             </>
           )}
-        </div>
+        </main>
       </div>
     </div>
   );

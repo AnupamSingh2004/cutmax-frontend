@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Manrope, Work_Sans } from "next/font/google";
 import "@/styles/globals.css";
 
-const inter = localFont({
-  variable: "--font-inter",
+const manrope = Manrope({
+  variable: "--font-manrope",
   display: "swap",
-  src: [
-    { path: "../fonts/Inter-Regular.otf", weight: "400", style: "normal" },
-    { path: "../fonts/Inter-Medium.otf", weight: "500", style: "normal" },
-    { path: "../fonts/Inter-SemiBold.otf", weight: "600", style: "normal" },
-    { path: "../fonts/Inter-Bold.otf", weight: "700 900", style: "normal" },
-  ],
+  weight: ["500", "600", "700", "800"],
+  subsets: ["latin"],
+});
+
+const workSans = Work_Sans({
+  variable: "--font-work-sans",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
@@ -27,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${manrope.variable} ${workSans.variable}`}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

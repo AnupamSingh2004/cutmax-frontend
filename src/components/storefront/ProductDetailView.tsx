@@ -27,7 +27,7 @@ export function ProductDetailView({ product, tiers, related }: { product: Produc
 
         <div>
           <div className="mb-2 flex items-center gap-2 text-xs text-muted">
-            <span className="rounded-full bg-cream-200 px-2 py-0.5 font-semibold text-navy-800">{product.brand}</span>
+            <span className="rounded-full bg-navy-900 px-2 py-0.5 font-semibold text-white">{product.brand}</span>
             {stockBadge(product.stock, 10)}
           </div>
           <h1 className="text-2xl font-bold text-navy-900">{product.name}</h1>
