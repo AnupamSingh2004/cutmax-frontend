@@ -108,10 +108,10 @@ function ProductsPageInner() {
         </h1>
       </div>
 
-      <div className="mx-auto flex max-w-7xl flex-wrap items-start gap-7 px-4 py-9 sm:px-12">
+      <div className="grid grid-cols-1 sm:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr]">
         <FilterSidebar filters={filters} onChange={updateFilters} />
 
-        <main className="min-w-0 flex-1">
+        <main className="min-w-0 px-4 py-9 sm:px-8 lg:px-12">
           <div className="sticky top-[110px] z-10 mb-5 flex flex-wrap items-center gap-4 rounded-[4px] bg-white p-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
             <div className="whitespace-nowrap text-[14.5px] font-semibold text-navy-900">
               {data ? `${visibleProducts.length} of ${data.total} results` : "Loading…"}
@@ -165,7 +165,7 @@ function ProductsPageInner() {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
@@ -187,7 +187,7 @@ function ProductsPageInner() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {visibleProducts.map((p) => (
                   <ProductCard key={p.id} product={p} lowStockLimit={data!.settings.low_stock} />
                 ))}

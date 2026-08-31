@@ -23,11 +23,11 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
   return (
     <div className="overflow-hidden rounded-[4px] bg-white transition-all hover:-translate-y-1" style={{ boxShadow: "var(--shadow-card)" }}>
       <Link href={`/products/${product.sku}`} className="relative block aspect-square bg-bg-soft">
-        <Image src={imgSrc} alt={product.name} fill sizes="(max-width: 640px) 50vw, 230px" className="object-contain p-4" onError={onImgError} />
-        <div className="absolute left-2.5 top-2.5 rounded-[3px] bg-navy-900 px-2.5 py-1 text-[10px] font-bold tracking-wide text-white">{product.brand}</div>
+        <Image src={imgSrc} alt={product.name} fill sizes="(max-width: 640px) 50vw, 320px" className="object-contain p-6" onError={onImgError} />
+        <div className="absolute left-3 top-3 rounded-[3px] bg-navy-900 px-3 py-1.5 text-[11px] font-bold tracking-wide text-white">{product.brand}</div>
         {!outOfStock && (
           <div
-            className="absolute right-2.5 top-2.5 flex items-center gap-1.5 rounded-[3px] bg-white/92 px-2.5 py-1 text-[10px] font-bold"
+            className="absolute right-3 top-3 flex items-center gap-1.5 rounded-[3px] bg-white/92 px-3 py-1.5 text-[11px] font-bold"
             style={{ color: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }}
           >
             <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }} />
@@ -35,23 +35,23 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
           </div>
         )}
       </Link>
-      <div className="p-4">
-        <div className="mb-1.5 truncate text-[10.5px] font-bold tracking-wide text-red-600">{product.subCategory}</div>
-        <Link href={`/products/${product.sku}`} className="font-display mb-0.5 block truncate text-[14.5px] font-semibold text-navy-900 hover:underline">
+      <div className="p-5">
+        <div className="mb-2 truncate text-[11.5px] font-bold tracking-wide text-red-600">{product.subCategory}</div>
+        <Link href={`/products/${product.sku}`} className="font-display mb-1 block truncate text-[17px] font-semibold text-navy-900 hover:underline">
           {product.name}
         </Link>
-        <div className="mb-3 text-xs text-muted">
+        <div className="mb-4 text-[13px] text-muted">
           SKU {product.sku} · {product.stock} {product.unit} available
         </div>
-        <div className="mb-3 font-display text-[17px] font-bold text-navy-900">₹{product.price.toFixed(2)}</div>
+        <div className="mb-4 font-display text-[20px] font-bold text-navy-900">₹{product.price.toFixed(2)}</div>
 
         {outOfStock ? (
-          <span className="block w-full rounded-[3px] bg-bg-soft py-2.5 text-center text-[13.5px] font-bold text-muted">Out of stock</span>
+          <span className="block w-full rounded-[3px] bg-bg-soft py-3 text-center text-sm font-bold text-muted">Out of stock</span>
         ) : qty > 0 ? (
-          <div className="flex items-center justify-between rounded-[3px] bg-bg-soft p-1.5">
+          <div className="flex items-center justify-between rounded-[3px] bg-bg-soft p-2">
             <button
               onClick={() => setQty(product.sku, qty - 1)}
-              className="flex h-[30px] w-[30px] items-center justify-center rounded-[3px] bg-white text-base font-bold text-navy-900 transition-colors hover:bg-border"
+              className="flex h-9 w-9 items-center justify-center rounded-[3px] bg-white text-lg font-bold text-navy-900 transition-colors hover:bg-border"
               aria-label="Decrease quantity"
             >
               −
@@ -59,7 +59,7 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
             <span className="text-sm font-bold text-navy-900">{qty} in bag</span>
             <button
               onClick={() => setQty(product.sku, qty + 1)}
-              className="flex h-[30px] w-[30px] items-center justify-center rounded-[3px] bg-white text-base font-bold text-navy-900 transition-colors hover:bg-border"
+              className="flex h-9 w-9 items-center justify-center rounded-[3px] bg-white text-lg font-bold text-navy-900 transition-colors hover:bg-border"
               aria-label="Increase quantity"
             >
               +
@@ -68,7 +68,7 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
         ) : (
           <button
             onClick={() => addItem({ sku: product.sku, name: product.name, category: product.category, unitPrice: product.price, imageUrl: product.imageUrl })}
-            className="w-full rounded-[3px] bg-navy-900 py-2.5 text-[13.5px] font-bold text-white transition-colors hover:bg-navy-700"
+            className="w-full rounded-[3px] bg-navy-900 py-3 text-sm font-bold text-white transition-colors hover:bg-navy-700"
           >
             + Add to Enquiry
           </button>
