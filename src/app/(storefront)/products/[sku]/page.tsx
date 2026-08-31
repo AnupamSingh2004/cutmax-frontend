@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import { API_BASE } from "@/lib/api-client";
 import { productImageSrc } from "@/lib/product-image";
 import { ProductDetailView } from "@/components/storefront/ProductDetailView";
-import type { Product, PriceTier } from "@/lib/types";
+import type { Product, PriceBreak } from "@/lib/types";
 
 interface ProductDetailResponse {
   product: Product;
-  tiers: PriceTier[];
+  priceBreaks: PriceBreak[];
   related: Product[];
 }
 
@@ -40,5 +40,5 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const data = await getProduct(sku);
   if (!data) notFound();
 
-  return <ProductDetailView product={data.product} tiers={data.tiers} related={data.related} />;
+  return <ProductDetailView product={data.product} priceBreaks={data.priceBreaks} related={data.related} />;
 }

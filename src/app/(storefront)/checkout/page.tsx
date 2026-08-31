@@ -8,7 +8,7 @@ import { Input, Textarea, Select } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
 const GST_RATE = 18;
-const WHATSAPP_NUMBER = "919999999999";
+const WHATSAPP_NUMBER = "918856828894";
 
 export default function CheckoutPage() {
   const router = useRouter();

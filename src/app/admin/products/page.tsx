@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { apiFetch, ApiError, uploadsUrl } from "@/lib/api-client";
-import type { Product } from "@/lib/types";
+import type { Product, PriceBreak } from "@/lib/types";
 import { CATEGORY_NAMES, subCategoriesFor } from "@/lib/taxonomy";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
@@ -17,6 +17,19 @@ interface ProductsResponse {
   page: number;
   per_page: number;
 }
+
+interface ProductDetailResponse {
+  product: Product;
+  priceBreaks: PriceBreak[];
+}
+
+const DEFAULT_TIER_QTYS = [10, 50, 100, 500];
+
+function defaultBreakRows(): BreakRow[] {
+  return DEFAULT_TIER_QTYS.map((q) => ({ minQty: String(q), unitPrice: "" }));
+}
+
+type SpecRow = { label: string; value: string };
 
 const EMPTY_FORM = {
   sku: "",
@@ -31,7 +44,149 @@ const EMPTY_FORM = {
   material: "",
 };
 
+type FormState = typeof EMPTY_FORM;
+
 const MATERIAL_OPTIONS = ["", "Carbide", "HSS"];
+
+type BreakRow = { minQty: string; unitPrice: string };
+
+function PriceBreaksEditor({ rows, onChange }: { rows: BreakRow[]; onChange: (rows: BreakRow[]) => void }) {
+  function update(i: number, field: keyof BreakRow, value: string) {
+    onChange(rows.map((r, idx) => (idx === i ? { ...r, [field]: value } : r)));
+  }
+  function remove(i: number) {
+    onChange(rows.filter((_, idx) => idx !== i));
+  }
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-medium text-navy-900">Volume pricing (optional)</label>
+      <p className="mb-2 text-xs text-muted">
+        The usual bulk quantities are pre-filled — just add a per-unit price next to the ones you want to offer.
+        Leave a price blank to skip that tier; leave all of them blank to keep one price at any quantity.
+      </p>
+      <div className="flex flex-col gap-2">
+        {rows.map((row, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              type="number"
+              min={1}
+              placeholder="Min qty"
+              value={row.minQty}
+              onChange={(e) => update(i, "minQty", e.target.value)}
+              className="w-24 rounded-lg border border-border px-2 py-1.5 text-sm"
+            />
+            <span className="text-xs text-muted">units → ₹</span>
+            <input
+              type="number"
+              min={0.01}
+              step="0.01"
+              placeholder="Unit price"
+              value={row.unitPrice}
+              onChange={(e) => update(i, "unitPrice", e.target.value)}
+              className="w-28 rounded-lg border border-border px-2 py-1.5 text-sm"
+            />
+            <span className="text-xs text-muted">each</span>
+            <button type="button" onClick={() => remove(i)} className="ml-auto text-xs font-semibold text-red-600 hover:underline">
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange([...rows, { minQty: "", unitPrice: "" }])}
+        className="mt-2 text-xs font-semibold text-navy-700 hover:underline"
+      >
+        + Add price break
+      </button>
+    </div>
+  );
+}
+
+function SpecificationsEditor({ rows, onChange }: { rows: SpecRow[]; onChange: (rows: SpecRow[]) => void }) {
+  function update(i: number, field: keyof SpecRow, value: string) {
+    onChange(rows.map((r, idx) => (idx === i ? { ...r, [field]: value } : r)));
+  }
+  function remove(i: number) {
+    onChange(rows.filter((_, idx) => idx !== i));
+  }
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-medium text-navy-900">Specifications (optional)</label>
+      <p className="mb-2 text-xs text-muted">Extra spec-sheet rows shown on the product page, e.g. Coating, Flute Count, Shank Diameter.</p>
+      <div className="flex flex-col gap-2">
+        {rows.map((row, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              placeholder="Label (e.g. Coating)"
+              value={row.label}
+              onChange={(e) => update(i, "label", e.target.value)}
+              className="w-40 rounded-lg border border-border px-2 py-1.5 text-sm"
+            />
+            <input
+              placeholder="Value (e.g. TiAlN)"
+              value={row.value}
+              onChange={(e) => update(i, "value", e.target.value)}
+              className="flex-1 rounded-lg border border-border px-2 py-1.5 text-sm"
+            />
+            <button type="button" onClick={() => remove(i)} className="text-xs font-semibold text-red-600 hover:underline">
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange([...rows, { label: "", value: "" }])}
+        className="mt-2 text-xs font-semibold text-navy-700 hover:underline"
+      >
+        + Add specification
+      </button>
+    </div>
+  );
+}
+
+/** Shared field set for both the create form and the full edit modal. */
+function ProductFormFields({ form, setForm }: { form: FormState; setForm: React.Dispatch<React.SetStateAction<FormState>> }) {
+  return (
+    <>
+      <Input label="SKU" required value={form.sku} onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))} />
+      <Input label="Name" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+      <Select
+        label="Category"
+        value={form.category}
+        onChange={(e) => setForm((f) => ({ ...f, category: e.target.value, subCategory: subCategoriesFor(e.target.value)[0] ?? "" }))}
+      >
+        {CATEGORY_NAMES.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+      </Select>
+      <Select label="Sub-category" value={form.subCategory} onChange={(e) => setForm((f) => ({ ...f, subCategory: e.target.value }))}>
+        {subCategoriesFor(form.category).map((s) => (
+          <option key={s} value={s}>
+            {s}
+          </option>
+        ))}
+      </Select>
+      <Input label="Brand" value={form.brand} onChange={(e) => setForm((f) => ({ ...f, brand: e.target.value }))} />
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Price" type="number" required value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
+        <Input label="Stock" type="number" required value={form.stock} onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Unit" value={form.unit} onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))} />
+        <Select label="Material" value={form.material} onChange={(e) => setForm((f) => ({ ...f, material: e.target.value }))}>
+          {MATERIAL_OPTIONS.map((m) => (
+            <option key={m} value={m}>{m || "Not set"}</option>
+          ))}
+        </Select>
+      </div>
+      <Input label="Description" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+    </>
+  );
+}
 
 export default function AdminProductsPage() {
   const [data, setData] = useState<ProductsResponse | null>(null);
@@ -39,15 +194,34 @@ export default function AdminProductsPage() {
   const [page, setPage] = useState(1);
   const [edits, setEdits] = useState<Record<string, { price: string; stock: string; material: string }>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
+
   const [createOpen, setCreateOpen] = useState(false);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [formImage, setFormImage] = useState<File | null>(null);
+  const [formBreaks, setFormBreaks] = useState<BreakRow[]>(defaultBreakRows());
+  const [formSpecs, setFormSpecs] = useState<SpecRow[]>([]);
   const [formError, setFormError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [editForm, setEditForm] = useState<FormState>(EMPTY_FORM);
+  const [editImage, setEditImage] = useState<File | null>(null);
+  const [editBreaks, setEditBreaks] = useState<BreakRow[]>([]);
+  const [editSpecs, setEditSpecs] = useState<SpecRow[]>([]);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [editSaving, setEditSaving] = useState(false);
+
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [materialFilter, setMaterialFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const load = useCallback(() => {
-    const params = new URLSearchParams({ page: String(page), per_page: "50", active: "all" });
+    const params = new URLSearchParams({ page: String(page), per_page: "50", active: statusFilter });
     if (q) params.set("q", q);
+    if (categoryFilter) params.set("category", categoryFilter);
+    if (materialFilter) params.set("material", materialFilter);
     apiFetch<ProductsResponse>(`/api/admin/products?${params.toString()}`).then(setData);
-  }, [page, q]);
+  }, [page, q, categoryFilter, materialFilter, statusFilter]);
 
   useEffect(load, [load]);
 
@@ -86,19 +260,149 @@ export default function AdminProductsPage() {
     load();
   }
 
+  // De-dupes by minQty (last one wins), drops rows with no qty, and — the
+  // one hard rule — never saves a price break at ₹0 or less, since that
+  // would silently make bulk orders free instead of just "not set".
+  function validBreaks(rows: BreakRow[]) {
+    const byQty = new Map<number, number>();
+    for (const r of rows) {
+      const minQty = Math.floor(Number(r.minQty));
+      const unitPrice = Number(r.unitPrice);
+      if (!Number.isFinite(minQty) || minQty <= 0) continue;
+      if (!Number.isFinite(unitPrice) || unitPrice <= 0) continue;
+      byQty.set(minQty, unitPrice);
+    }
+    return Array.from(byQty.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([minQty, unitPrice]) => ({ minQty, unitPrice }));
+  }
+
+  function validSpecs(rows: SpecRow[]) {
+    return rows
+      .map((r) => ({ label: r.label.trim(), value: r.value.trim() }))
+      .filter((r) => r.label !== "" && r.value !== "");
+  }
+
   async function createProduct(e: React.FormEvent) {
     e.preventDefault();
     setFormError(null);
+
+    const price = Number(form.price);
+    const stock = Number(form.stock);
+    if (!form.sku.trim() || !form.name.trim()) {
+      setFormError("SKU and name are required.");
+      return;
+    }
+    if (!Number.isFinite(price) || price <= 0) {
+      setFormError("Price must be greater than zero.");
+      return;
+    }
+    if (!Number.isFinite(stock) || stock < 0) {
+      setFormError("Stock can't be negative.");
+      return;
+    }
+
+    setCreating(true);
     try {
-      await apiFetch("/api/admin/products", {
+      const res = await apiFetch<{ product: { id: string; sku: string } }>("/api/admin/products", {
         method: "POST",
-        body: { ...form, price: Number(form.price), stock: Number(form.stock) },
+        body: { ...form, price, stock, specifications: validSpecs(formSpecs) },
       });
+
+      if (formImage) {
+        const fd = new FormData();
+        fd.set("sku", res.product.sku);
+        fd.set("image", formImage);
+        await apiFetch(`/api/admin/uploads`, { method: "POST", body: fd });
+      }
+
+      const breaks = validBreaks(formBreaks);
+      if (breaks.length > 0) {
+        await apiFetch(`/api/admin/products/${res.product.id}/price-breaks`, { method: "PUT", body: { breaks } });
+      }
+
       setCreateOpen(false);
       setForm(EMPTY_FORM);
+      setFormImage(null);
+      setFormBreaks(defaultBreakRows());
+      setFormSpecs([]);
       load();
     } catch (err) {
       setFormError(err instanceof ApiError ? err.message : "Failed to create product");
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function openEdit(p: Product) {
+    setEditProduct(p);
+    setEditError(null);
+    setEditImage(null);
+    setEditForm({
+      sku: p.sku,
+      name: p.name,
+      category: p.category,
+      subCategory: p.subCategory,
+      brand: p.brand,
+      description: p.description,
+      price: String(p.price),
+      stock: String(p.stock),
+      unit: p.unit,
+      material: p.material ?? "",
+    });
+    setEditSpecs([]);
+    setEditBreaks(defaultBreakRows());
+
+    const res = await apiFetch<ProductDetailResponse>(`/api/admin/products?id=${p.id}`);
+    const specs: SpecRow[] = Array.isArray(res.product.specifications) ? res.product.specifications : [];
+    setEditSpecs(specs);
+    if (res.priceBreaks && res.priceBreaks.length > 0) {
+      setEditBreaks(res.priceBreaks.map((b) => ({ minQty: String(b.minQty), unitPrice: String(b.unitPrice) })));
+    }
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editProduct) return;
+    setEditError(null);
+
+    const price = Number(editForm.price);
+    const stock = Number(editForm.stock);
+    if (!editForm.sku.trim() || !editForm.name.trim()) {
+      setEditError("SKU and name are required.");
+      return;
+    }
+    if (!Number.isFinite(price) || price <= 0) {
+      setEditError("Price must be greater than zero.");
+      return;
+    }
+    if (!Number.isFinite(stock) || stock < 0) {
+      setEditError("Stock can't be negative.");
+      return;
+    }
+
+    setEditSaving(true);
+    try {
+      await apiFetch(`/api/admin/products/${editProduct.id}`, {
+        method: "PUT",
+        body: { ...editForm, price, stock, specifications: validSpecs(editSpecs) },
+      });
+
+      if (editImage) {
+        const fd = new FormData();
+        fd.set("sku", editForm.sku);
+        fd.set("image", editImage);
+        await apiFetch(`/api/admin/uploads`, { method: "POST", body: fd });
+      }
+
+      await apiFetch(`/api/admin/products/${editProduct.id}/price-breaks`, { method: "PUT", body: { breaks: validBreaks(editBreaks) } });
+
+      setEditProduct(null);
+      load();
+    } catch (err) {
+      setEditError(err instanceof ApiError ? err.message : "Failed to save changes");
+    } finally {
+      setEditSaving(false);
     }
   }
 
@@ -114,7 +418,44 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
-      <Input placeholder="Search by name or SKU…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} />
+      <div className="flex flex-wrap gap-3">
+        <div className="min-w-[200px] flex-1">
+          <Input
+            placeholder="Search by name or SKU…"
+            value={q}
+            onChange={(e) => { setQ(e.target.value); setPage(1); }}
+          />
+        </div>
+        <select
+          value={categoryFilter}
+          onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
+          className="rounded-lg border border-border px-3 py-2 text-sm"
+        >
+          <option value="">All Categories</option>
+          {CATEGORY_NAMES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <select
+          value={materialFilter}
+          onChange={(e) => { setMaterialFilter(e.target.value); setPage(1); }}
+          className="rounded-lg border border-border px-3 py-2 text-sm"
+        >
+          <option value="">All Materials</option>
+          {MATERIAL_OPTIONS.filter((m) => m).map((m) => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+          className="rounded-lg border border-border px-3 py-2 text-sm"
+        >
+          <option value="all">All Status</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
 
       <div className="overflow-x-auto rounded-card-lg border border-border bg-white shadow-card">
         <table className="w-full min-w-[900px] text-sm">
@@ -187,12 +528,15 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-2">{p.active ? <Badge tone="success">Active</Badge> : <Badge tone="danger">Inactive</Badge>}</td>
                   <td className="px-4 py-2">
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {dirty && (
                         <Button size="sm" disabled={savingId === p.id} onClick={() => saveRow(p)}>
                           Save
                         </Button>
                       )}
+                      <Button size="sm" variant="secondary" onClick={() => openEdit(p)}>
+                        Edit
+                      </Button>
                       <Button size="sm" variant="secondary" onClick={() => toggleActive(p)}>
                         {p.active ? "Deactivate" : "Activate"}
                       </Button>
@@ -226,38 +570,50 @@ export default function AdminProductsPage() {
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="New Product">
         <form onSubmit={createProduct} className="flex flex-col gap-3">
-          <Input label="SKU" required value={form.sku} onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))} />
-          <Input label="Name" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
-          <Select
-            label="Category"
-            value={form.category}
-            onChange={(e) => setForm((f) => ({ ...f, category: e.target.value, subCategory: subCategoriesFor(e.target.value)[0] ?? "" }))}
-          >
-            {CATEGORY_NAMES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </Select>
-          <Select label="Sub-category" value={form.subCategory} onChange={(e) => setForm((f) => ({ ...f, subCategory: e.target.value }))}>
-            {subCategoriesFor(form.category).map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </Select>
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Price" type="number" required value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
-            <Input label="Stock" type="number" required value={form.stock} onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))} />
+          <ProductFormFields form={form} setForm={setForm} />
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-navy-900">Product image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFormImage(e.target.files?.[0] ?? null)}
+              className="block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-bg-soft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-navy-900"
+            />
           </div>
-          <Select label="Material" value={form.material} onChange={(e) => setForm((f) => ({ ...f, material: e.target.value }))}>
-            {MATERIAL_OPTIONS.map((m) => (
-              <option key={m} value={m}>{m || "Not set"}</option>
-            ))}
-          </Select>
-          <Input label="Description" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+
+          <SpecificationsEditor rows={formSpecs} onChange={setFormSpecs} />
+          <PriceBreaksEditor rows={formBreaks} onChange={setFormBreaks} />
+
           {formError && <p className="text-sm text-red-600">{formError}</p>}
-          <Button type="submit">Create Product</Button>
+          <Button type="submit" disabled={creating}>{creating ? "Creating…" : "Create Product"}</Button>
+        </form>
+      </Modal>
+
+      <Modal open={!!editProduct} onClose={() => setEditProduct(null)} title={`Edit — ${editProduct?.name ?? ""}`}>
+        <form onSubmit={saveEdit} className="flex flex-col gap-3">
+          <ProductFormFields form={editForm} setForm={setEditForm} />
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-navy-900">Replace product image</label>
+            {editProduct?.imageUrl && (
+              <div className="relative mb-2 h-16 w-16 overflow-hidden rounded-lg border border-border bg-bg-soft">
+                <Image src={uploadsUrl(editProduct.imageUrl)} alt={editProduct.name} fill sizes="64px" className="object-cover" />
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setEditImage(e.target.files?.[0] ?? null)}
+              className="block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-bg-soft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-navy-900"
+            />
+          </div>
+
+          <SpecificationsEditor rows={editSpecs} onChange={setEditSpecs} />
+          <PriceBreaksEditor rows={editBreaks} onChange={setEditBreaks} />
+
+          {editError && <p className="text-sm text-red-600">{editError}</p>}
+          <Button type="submit" disabled={editSaving}>{editSaving ? "Saving…" : "Save Changes"}</Button>
         </form>
       </Modal>
     </div>

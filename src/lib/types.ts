@@ -15,8 +15,16 @@ export interface Product {
   active: boolean;
   sortOrder: number;
   material: string | null;
+  specifications: { label: string; value: string }[] | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PriceBreak {
+  id: string;
+  productId: string;
+  minQty: number;
+  unitPrice: number;
 }
 
 export interface PriceTier {

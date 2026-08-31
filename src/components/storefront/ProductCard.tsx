@@ -21,8 +21,12 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
   const low = product.stock > 0 && product.stock <= lowStockLimit;
   const outOfStock = product.stock <= 0;
 
+  function clamp(n: number) {
+    return Math.min(product.stock, Math.max(1, n));
+  }
+
   function handleAdd() {
-    const n = Math.max(1, Math.floor(Number(qtyInput)) || 1);
+    const n = clamp(Math.floor(Number(qtyInput)) || 1);
     addItem({ sku: product.sku, name: product.name, category: product.category, unitPrice: product.price, imageUrl: product.imageUrl }, n);
     setQtyInput("1");
   }
@@ -57,40 +61,52 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
           {outOfStock ? (
             <span className="block w-full rounded-[3px] bg-bg-soft py-3 text-center text-sm font-bold text-muted">Out of stock</span>
           ) : qty > 0 ? (
-            <div className="flex items-center justify-between rounded-[3px] bg-bg-soft p-2">
-              <button
-                onClick={() => setQty(product.sku, qty - 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-[3px] bg-white text-lg font-bold text-navy-900 transition-colors hover:bg-border"
-                aria-label="Decrease quantity"
-              >
-                −
-              </button>
-              <span className="text-sm font-bold text-navy-900">{qty} in bag</span>
-              <button
-                onClick={() => setQty(product.sku, qty + 1)}
-                className="flex h-9 w-9 items-center justify-center rounded-[3px] bg-white text-lg font-bold text-navy-900 transition-colors hover:bg-border"
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
+            <div>
+              <div className="flex items-center justify-between rounded-[3px] bg-bg-soft p-2">
+                <button
+                  onClick={() => setQty(product.sku, qty - 1)}
+                  className="flex h-9 w-9 items-center justify-center rounded-[3px] bg-white text-lg font-bold text-navy-900 transition-colors hover:bg-border"
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
+                <span className="text-sm font-bold text-navy-900">{qty} in bag</span>
+                <button
+                  onClick={() => setQty(product.sku, clamp(qty + 1))}
+                  disabled={qty >= product.stock}
+                  className="flex h-9 w-9 items-center justify-center rounded-[3px] bg-white text-lg font-bold text-navy-900 transition-colors hover:bg-border disabled:opacity-30 disabled:hover:bg-white"
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+              {qty >= product.stock && <p className="mt-1.5 text-center text-[11.5px] text-muted">Max available in stock</p>}
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min={1}
-                value={qtyInput}
-                onChange={(e) => setQtyInput(e.target.value)}
-                onClick={(e) => e.preventDefault()}
-                className="w-16 shrink-0 rounded-[3px] border border-border px-2 py-3 text-center text-sm font-bold text-navy-900 outline-none focus:border-navy-700"
-                aria-label="Quantity"
-              />
-              <button
-                onClick={handleAdd}
-                className="flex-1 rounded-[3px] bg-navy-900 py-3 text-sm font-bold text-white transition-colors hover:bg-navy-700"
-              >
-                + Add to Enquiry
-              </button>
+            <div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={product.stock}
+                  value={qtyInput}
+                  onChange={(e) => setQtyInput(e.target.value)}
+                  onBlur={(e) => {
+                    const n = Math.floor(Number(e.target.value));
+                    setQtyInput(String(Number.isFinite(n) && n > 0 ? clamp(n) : 1));
+                  }}
+                  onClick={(e) => e.preventDefault()}
+                  className="w-16 shrink-0 rounded-[3px] border border-border px-2 py-3 text-center text-sm font-bold text-navy-900 outline-none focus:border-navy-700"
+                  aria-label="Quantity"
+                />
+                <button
+                  onClick={handleAdd}
+                  className="flex-1 rounded-[3px] bg-navy-900 py-3 text-sm font-bold text-white transition-colors hover:bg-navy-700"
+                >
+                  + Add to Enquiry
+                </button>
+              </div>
+              <p className="mt-1.5 text-center text-[11.5px] text-muted">{product.stock} {product.unit} max</p>
             </div>
           )}
         </div>
