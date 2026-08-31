@@ -63,6 +63,26 @@ export default function ContactPage() {
                 <div className="text-[13.5px] text-muted-soft">GSTIN {GSTIN}</div>
               </div>
             </div>
+
+            <div className="overflow-hidden rounded-[4px] bg-white">
+              <iframe
+                title="Cutmax Technologies location"
+                src="https://www.google.com/maps?q=18.684178,73.805943&z=16&output=embed"
+                width="100%"
+                height="300"
+                style={{ border: 0, display: "block" }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              <a
+                href="https://maps.app.goo.gl/qTvWXJBfKddMuemg7?g_st=ac"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block px-6 py-3.5 text-center text-[13.5px] font-bold text-navy-900 hover:bg-bg-soft"
+              >
+                Get directions on Google Maps →
+              </a>
+            </div>
           </div>
 
           <div className="rounded-[4px] bg-white p-7 sm:p-10">

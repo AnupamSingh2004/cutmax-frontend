@@ -137,7 +137,6 @@ export function Nav() {
             <Link href="/products" className="hover:text-white">Products</Link>
             <Link href="/about" className="hover:text-white">About</Link>
             <Link href="/contact" className="hover:text-white">Contact</Link>
-            <Link href="/admin" className="hover:text-white">Admin Login</Link>
 
             {/* WhatsApp link — right edge */}
             <a
@@ -189,7 +188,6 @@ export function Nav() {
               <Link href={customer ? "/account/my-enquiries" : "/account/login"} onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">
                 {customer ? "My Enquiries" : "Sign In"}
               </Link>
-              <Link href="/admin" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">Admin Login</Link>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20CutMax%2C%20I%27m%20interested%20in%20your%20products.`}
                 target="_blank"
