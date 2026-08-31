@@ -28,13 +28,16 @@ const EMPTY_FORM = {
   price: "0",
   stock: "0",
   unit: "NOS",
+  material: "",
 };
+
+const MATERIAL_OPTIONS = ["", "Carbide", "HSS"];
 
 export default function AdminProductsPage() {
   const [data, setData] = useState<ProductsResponse | null>(null);
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
-  const [edits, setEdits] = useState<Record<string, { price: string; stock: string }>>({});
+  const [edits, setEdits] = useState<Record<string, { price: string; stock: string; material: string }>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -49,10 +52,10 @@ export default function AdminProductsPage() {
   useEffect(load, [load]);
 
   function editValue(p: Product) {
-    return edits[p.id] ?? { price: String(p.price), stock: String(p.stock) };
+    return edits[p.id] ?? { price: String(p.price), stock: String(p.stock), material: p.material ?? "" };
   }
 
-  function setEdit(id: string, field: "price" | "stock", value: string) {
+  function setEdit(id: string, field: "price" | "stock" | "material", value: string) {
     setEdits((e) => ({ ...e, [id]: { ...editValue({ id } as Product), ...e[id], [field]: value } }));
   }
 
@@ -62,7 +65,7 @@ export default function AdminProductsPage() {
     try {
       await apiFetch(`/api/admin/products/${p.id}`, {
         method: "PUT",
-        body: { price: Number(edit.price), stock: Number(edit.stock) },
+        body: { price: Number(edit.price), stock: Number(edit.stock), material: edit.material },
       });
       load();
     } finally {
@@ -122,6 +125,7 @@ export default function AdminProductsPage() {
               <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3">Price</th>
               <th className="px-4 py-3">Stock</th>
+              <th className="px-4 py-3">Material</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Actions</th>
             </tr>
@@ -129,7 +133,7 @@ export default function AdminProductsPage() {
           <tbody className="divide-y divide-border">
             {data?.products.map((p) => {
               const edit = editValue(p);
-              const dirty = edit.price !== String(p.price) || edit.stock !== String(p.stock);
+              const dirty = edit.price !== String(p.price) || edit.stock !== String(p.stock) || edit.material !== (p.material ?? "");
               return (
                 <tr key={p.id}>
                   <td className="px-4 py-2">
@@ -169,6 +173,17 @@ export default function AdminProductsPage() {
                       onChange={(e) => setEdit(p.id, "stock", e.target.value)}
                       className="w-20 rounded-lg border border-border px-2 py-1"
                     />
+                  </td>
+                  <td className="px-4 py-2">
+                    <select
+                      value={edit.material}
+                      onChange={(e) => setEdit(p.id, "material", e.target.value)}
+                      className="rounded-lg border border-border px-2 py-1"
+                    >
+                      {MATERIAL_OPTIONS.map((m) => (
+                        <option key={m} value={m}>{m || "—"}</option>
+                      ))}
+                    </select>
                   </td>
                   <td className="px-4 py-2">{p.active ? <Badge tone="success">Active</Badge> : <Badge tone="danger">Inactive</Badge>}</td>
                   <td className="px-4 py-2">
@@ -235,6 +250,11 @@ export default function AdminProductsPage() {
             <Input label="Price" type="number" required value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
             <Input label="Stock" type="number" required value={form.stock} onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))} />
           </div>
+          <Select label="Material" value={form.material} onChange={(e) => setForm((f) => ({ ...f, material: e.target.value }))}>
+            {MATERIAL_OPTIONS.map((m) => (
+              <option key={m} value={m}>{m || "Not set"}</option>
+            ))}
+          </Select>
           <Input label="Description" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
           {formError && <p className="text-sm text-red-600">{formError}</p>}
           <Button type="submit">Create Product</Button>

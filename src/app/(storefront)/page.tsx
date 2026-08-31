@@ -54,7 +54,7 @@ export default async function HomePage() {
       {/* ════════ Hero ════════ */}
       <section
         className="relative overflow-hidden"
-        style={{ background: "linear-gradient(155deg,#0E1830 0%,#162650 55%,#1B2E5C 100%)" }}
+        style={{ background: "linear-gradient(155deg,#1B2C56 0%,#2C4488 55%,#37569E 100%)" }}
       >
         <div className="hero-pulse-ring" />
         <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-14 sm:py-16 lg:grid-cols-2 lg:py-[88px]">

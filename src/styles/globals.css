@@ -4,11 +4,11 @@
   --font-sans: var(--font-work-sans), "Segoe UI", Arial, sans-serif;
   --font-display: var(--font-manrope), var(--font-work-sans), "Segoe UI", Arial, sans-serif;
 
-  /* Navy — headers, footer, hero gradient, primary buttons */
-  --color-navy-950: #0e1830;
-  --color-navy-900: #12203f;
-  --color-navy-800: #162650;
-  --color-navy-700: #28407d;
+  /* Navy — headers, footer, hero gradient, primary buttons (lightened from the brand spec's near-black navy) */
+  --color-navy-950: #1b2c56;
+  --color-navy-900: #22366b;
+  --color-navy-800: #2c4488;
+  --color-navy-700: #4667b3;
 
   /* Red — primary CTA / brand accent (the literal Cutmax red) */
   --color-red-600: #e31e24;

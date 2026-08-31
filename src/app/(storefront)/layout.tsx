@@ -13,7 +13,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
         CUTMAX <span>TECHNOLOGIES</span>
       </div>
       <Nav />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 bg-bg-soft">{children}</main>
       <Footer />
     </div>
   );

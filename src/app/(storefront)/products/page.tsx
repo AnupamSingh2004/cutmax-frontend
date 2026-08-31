@@ -15,6 +15,7 @@ interface ProductsResponse {
   page: number;
   per_page: number;
   brands: string[];
+  materials: string[];
   settings: PublicSettings;
 }
 
@@ -22,7 +23,7 @@ const PER_PAGE = 24;
 const WHATSAPP_NUMBER = "918856828894";
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "Sort: Newest" },
+  { value: "newest", label: "Newest" },
   { value: "name", label: "Name: A–Z" },
   { value: "name_desc", label: "Name: Z–A" },
   { value: "price", label: "Price: Low to High" },
@@ -38,17 +39,15 @@ function ProductsPageInner() {
     category: searchParams.get("category") ?? undefined,
     sub: searchParams.get("sub") ?? undefined,
     brand: searchParams.get("brand") ?? undefined,
+    material: searchParams.get("material") ?? undefined,
     sort: searchParams.get("sort") ?? "newest",
   };
   const q = searchParams.get("q") ?? "";
   const page = Number(searchParams.get("page") ?? 1);
-  const [searchInput, setSearchInput] = useState(q);
   const [inStockOnly, setInStockOnly] = useState(false);
 
   const [data, setData] = useState<ProductsResponse | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => setSearchInput(q), [q]);
 
   useEffect(() => {
     setLoading(true);
@@ -56,6 +55,7 @@ function ProductsPageInner() {
     if (filters.category) params.set("category", filters.category);
     if (filters.sub) params.set("sub", filters.sub);
     if (filters.brand) params.set("brand", filters.brand);
+    if (filters.material) params.set("material", filters.material);
     if (q) params.set("q", q);
 
     apiFetch<ProductsResponse>(`/api/public/products?${params.toString()}`)
@@ -67,30 +67,22 @@ function ProductsPageInner() {
             page: res.page ?? 1,
             per_page: res.per_page ?? PER_PAGE,
             brands: Array.isArray(res.brands) ? res.brands : [],
+            materials: Array.isArray(res.materials) ? res.materials : [],
             settings: res.settings ?? { whatsapp: "", gst_percent: 18, low_stock: 10 },
           });
         }
       })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
-  }, [filters.category, filters.sub, filters.brand, filters.sort, q, page]);
+  }, [filters.category, filters.sub, filters.brand, filters.material, filters.sort, q, page]);
 
   function updateFilters(next: Partial<Filters>) {
     const params = new URLSearchParams(searchParams.toString());
     const merged = { ...filters, ...next };
-    for (const key of ["category", "sub", "brand", "sort"] as const) {
+    for (const key of ["category", "sub", "brand", "material", "sort"] as const) {
       if (merged[key]) params.set(key, merged[key]!);
       else params.delete(key);
     }
-    params.delete("page");
-    router.push(`/products?${params.toString()}`);
-  }
-
-  function submitSearch(e: React.FormEvent) {
-    e.preventDefault();
-    const params = new URLSearchParams(searchParams.toString());
-    if (searchInput) params.set("q", searchInput);
-    else params.delete("q");
     params.delete("page");
     router.push(`/products?${params.toString()}`);
   }
@@ -112,33 +104,18 @@ function ProductsPageInner() {
           <span className="text-[12.5px] font-bold tracking-[0.14em] text-orange-500">PRODUCT CATALOGUE</span>
         </div>
         <h1 className="font-display text-[1.65rem] font-extrabold text-white sm:text-[2.125rem]">
-          {data ? `${data.total} SKUs, organized for procurement.` : "Loading catalogue…"}
+          {q ? `Results for "${q}"` : data ? `${data.total} SKUs, organized for procurement.` : "Loading catalogue…"}
         </h1>
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-wrap items-start gap-7 px-4 py-9 sm:px-12">
-        <FilterSidebar filters={filters} brands={data?.brands ?? []} onChange={updateFilters} />
+        <FilterSidebar filters={filters} onChange={updateFilters} />
 
         <main className="min-w-0 flex-1">
-          <div className="sticky top-20 z-10 mb-5 flex flex-wrap items-center gap-3 rounded-[4px] bg-white p-3.5" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
-            <form onSubmit={submitSearch} className="flex min-w-[220px] flex-1 items-center rounded-[3px] bg-bg-soft">
-              <svg className="ml-3 h-4 w-4 shrink-0 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="7" /><path strokeLinecap="round" d="M21 21l-4.35-4.35" /></svg>
-              <input
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search within catalogue…"
-                className="w-full bg-transparent px-2.5 py-2.5 text-sm focus:outline-none"
-              />
-            </form>
-            <select
-              value={filters.sort}
-              onChange={(e) => updateFilters({ sort: e.target.value })}
-              className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] text-navy-900"
-            >
-              {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+          <div className="sticky top-[110px] z-10 mb-5 flex flex-wrap items-center gap-4 rounded-[4px] bg-white p-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
+            <div className="whitespace-nowrap text-[14.5px] font-semibold text-navy-900">
+              {data ? `${visibleProducts.length} of ${data.total} results` : "Loading…"}
+            </div>
             <button
               onClick={() => setInStockOnly((v) => !v)}
               className="whitespace-nowrap rounded-[3px] border px-3.5 py-2.5 text-[13.5px] font-semibold transition-colors"
@@ -146,8 +123,44 @@ function ProductsPageInner() {
             >
               In stock only
             </button>
-            <div className="ml-auto whitespace-nowrap text-[13.5px] text-muted-soft">
-              {data ? `${visibleProducts.length} of ${data.total} shown` : ""}
+
+            {(data?.brands.length ?? 0) > 0 && (
+              <select
+                value={filters.brand ?? ""}
+                onChange={(e) => updateFilters({ brand: e.target.value || undefined })}
+                className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] font-semibold text-navy-900"
+              >
+                <option value="">All Brands</option>
+                {data!.brands.map((b) => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
+              </select>
+            )}
+
+            {(data?.materials.length ?? 0) > 0 && (
+              <select
+                value={filters.material ?? ""}
+                onChange={(e) => updateFilters({ material: e.target.value || undefined })}
+                className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] font-semibold text-navy-900"
+              >
+                <option value="">All Materials</option>
+                {data!.materials.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            )}
+
+            <div className="ml-auto flex items-center gap-2.5">
+              <label className="whitespace-nowrap text-[13.5px] text-muted-soft">Sort by:</label>
+              <select
+                value={filters.sort}
+                onChange={(e) => updateFilters({ sort: e.target.value })}
+                className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] font-semibold text-navy-900"
+              >
+                {SORT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
             </div>
           </div>
 

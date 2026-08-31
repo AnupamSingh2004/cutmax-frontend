@@ -14,6 +14,7 @@ export interface Product {
   featured: boolean;
   active: boolean;
   sortOrder: number;
+  material: string | null;
   createdAt: string;
   updatedAt: string;
 }
