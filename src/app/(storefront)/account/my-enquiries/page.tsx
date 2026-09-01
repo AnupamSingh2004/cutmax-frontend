@@ -40,7 +40,7 @@ export default function MyEnquiriesPage() {
   if (!customer) {
     return (
       <div className="mx-auto max-w-md px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold text-navy-900">Sign in to view your enquiries</h1>
+        <h1 className="text-2xl font-bold text-heading">Sign in to view your enquiries</h1>
         <Link href="/account/login">
           <Button className="mt-6">Sign in</Button>
         </Link>
@@ -52,7 +52,7 @@ export default function MyEnquiriesPage() {
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-navy-900">My Enquiries</h1>
+          <h1 className="text-2xl font-bold text-heading">My Enquiries</h1>
           <p className="text-sm text-muted">Signed in as {customer.email}</p>
         </div>
         <Button variant="secondary" size="sm" onClick={logout}>
@@ -69,10 +69,10 @@ export default function MyEnquiriesPage() {
       ) : (
         <div className="flex flex-col gap-4">
           {enquiries.map((enq) => (
-            <div key={enq.id} className="rounded-card-lg border border-border bg-white p-5 shadow-card">
+            <div key={enq.id} className="rounded-card-lg border border-border bg-surface p-5 shadow-card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-navy-900">{enq.reference}</p>
+                  <p className="font-semibold text-heading">{enq.reference}</p>
                   <p className="text-xs text-muted">{new Date(enq.createdAt).toLocaleString("en-IN")}</p>
                 </div>
                 <Badge tone={STATUS_TONE[enq.status]}>{enq.status}</Badge>
@@ -84,7 +84,7 @@ export default function MyEnquiriesPage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-3 font-semibold text-navy-900">Total: ₹{enq.grandTotal.toFixed(2)}</p>
+              <p className="mt-3 font-semibold text-heading">Total: ₹{enq.grandTotal.toFixed(2)}</p>
             </div>
           ))}
         </div>

@@ -112,14 +112,14 @@ function ProductsPageInner() {
         <FilterSidebar filters={filters} onChange={updateFilters} />
 
         <main className="min-w-0 px-4 py-9 sm:px-8 lg:px-12">
-          <div className="sticky top-[110px] z-10 mb-5 flex flex-wrap items-center gap-4 rounded-[4px] bg-white p-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
-            <div className="whitespace-nowrap text-[14.5px] font-semibold text-navy-900">
+          <div className="sticky top-[110px] z-10 mb-5 flex flex-wrap items-center gap-4 rounded-[4px] bg-surface p-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
+            <div className="whitespace-nowrap text-[14.5px] font-semibold text-heading">
               {data ? `${visibleProducts.length} of ${data.total} results` : "Loading…"}
             </div>
             <button
               onClick={() => setInStockOnly((v) => !v)}
               className="whitespace-nowrap rounded-[3px] border px-3.5 py-2.5 text-[13.5px] font-semibold transition-colors"
-              style={inStockOnly ? { background: "var(--color-navy-900)", color: "#fff", borderColor: "var(--color-navy-900)" } : { background: "#fff", color: "var(--color-navy-900)", borderColor: "var(--color-border)" }}
+              style={inStockOnly ? { background: "var(--color-navy-900)", color: "#fff", borderColor: "var(--color-navy-900)" } : { background: "var(--color-surface)", color: "var(--color-heading)", borderColor: "var(--color-border)" }}
             >
               In stock only
             </button>
@@ -128,7 +128,7 @@ function ProductsPageInner() {
               <select
                 value={filters.brand ?? ""}
                 onChange={(e) => updateFilters({ brand: e.target.value || undefined })}
-                className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] font-semibold text-navy-900"
+                className="rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading"
               >
                 <option value="">All Brands</option>
                 {data!.brands.map((b) => (
@@ -141,7 +141,7 @@ function ProductsPageInner() {
               <select
                 value={filters.material ?? ""}
                 onChange={(e) => updateFilters({ material: e.target.value || undefined })}
-                className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] font-semibold text-navy-900"
+                className="rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading"
               >
                 <option value="">All Materials</option>
                 {data!.materials.map((m) => (
@@ -155,7 +155,7 @@ function ProductsPageInner() {
               <select
                 value={filters.sort}
                 onChange={(e) => updateFilters({ sort: e.target.value })}
-                className="rounded-[3px] border border-border bg-white px-3 py-2.5 text-[13.5px] font-semibold text-navy-900"
+                className="rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading"
               >
                 {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -171,8 +171,8 @@ function ProductsPageInner() {
               ))}
             </div>
           ) : visibleProducts.length === 0 ? (
-            <div className="rounded-[4px] bg-white px-10 py-14 text-center">
-              <div className="font-display mb-2.5 text-[19px] font-bold text-navy-900">No matches found</div>
+            <div className="rounded-[4px] bg-surface px-10 py-14 text-center">
+              <div className="font-display mb-2.5 text-[19px] font-bold text-heading">No matches found</div>
               <p className="mx-auto mb-6 max-w-md text-[14.5px] leading-relaxed text-muted-soft">
                 Try a different search term or filter, or send us your specification directly.
               </p>

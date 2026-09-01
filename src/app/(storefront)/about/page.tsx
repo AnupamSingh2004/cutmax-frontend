@@ -18,7 +18,7 @@ export default function AboutPage() {
       <section className="bg-bg-soft px-4 py-14 sm:px-12 sm:py-24">
         <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 lg:grid-cols-2">
           <div>
-            <h2 className="font-display mb-4.5 text-[1.625rem] font-bold text-navy-900 sm:text-[2rem]">
+            <h2 className="font-display mb-4.5 text-[1.625rem] font-bold text-heading sm:text-[2rem]">
               Based in Pune, supplying CNC shops nationally.
             </h2>
             <p className="mb-4 text-[15.5px] leading-relaxed text-muted-soft">
@@ -28,24 +28,24 @@ export default function AboutPage() {
               Every enquiry is handled directly by our sales team, with GST-registered invoicing on every order.
             </p>
             <div className="grid grid-cols-3 gap-5">
-              <div className="rounded-[4px] bg-white p-4.5">
+              <div className="rounded-[4px] bg-surface p-4.5">
                 <div className="mb-1 text-xs text-muted">Location</div>
-                <div className="text-[14.5px] font-bold text-navy-900">Pune, Maharashtra</div>
+                <div className="text-[14.5px] font-bold text-heading">Pune, Maharashtra</div>
               </div>
-              <div className="rounded-[4px] bg-white p-4.5">
+              <div className="rounded-[4px] bg-surface p-4.5">
                 <div className="mb-1 text-xs text-muted">GSTIN</div>
-                <div className="text-[14.5px] font-bold text-navy-900">{GSTIN}</div>
+                <div className="text-[14.5px] font-bold text-heading">{GSTIN}</div>
               </div>
-              <div className="rounded-[4px] bg-white p-4.5">
+              <div className="rounded-[4px] bg-surface p-4.5">
                 <div className="mb-1 text-xs text-muted">Live SKUs</div>
-                <div className="text-[14.5px] font-bold text-navy-900">193+</div>
+                <div className="text-[14.5px] font-bold text-heading">193+</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-white px-4 py-14 sm:px-12 sm:py-24">
+      <section className="bg-surface px-4 py-14 sm:px-12 sm:py-24">
         <PageHeading eyebrow="How We Work" title="Built for industrial procurement." className="mb-12 max-w-xl" />
         <div className="grid grid-cols-1 gap-7 sm:grid-cols-3">
           {[
@@ -54,7 +54,7 @@ export default function AboutPage() {
             { title: "GST-ready billing", desc: `Registered under GSTIN ${GSTIN}, with compliant invoicing on every order.` },
           ].map((f) => (
             <div key={f.title} className="rounded-[4px] border-t-[3px] border-red-600 bg-bg-soft p-8">
-              <h3 className="font-display mb-2.5 text-[18px] font-bold text-navy-900">{f.title}</h3>
+              <h3 className="font-display mb-2.5 text-[18px] font-bold text-heading">{f.title}</h3>
               <p className="text-[14.5px] leading-relaxed text-muted-soft">{f.desc}</p>
             </div>
           ))}

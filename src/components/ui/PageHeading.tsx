@@ -1,8 +1,8 @@
 type Level = "h1" | "h2";
 
 const TITLE_CLASSES: Record<Level, string> = {
-  h1: "font-display text-[2rem] font-extrabold leading-[1.15] text-navy-900 sm:text-[2.75rem]",
-  h2: "font-display text-[1.75rem] font-bold leading-[1.15] text-navy-900 sm:text-[2.375rem]",
+  h1: "font-display text-[2rem] font-extrabold leading-[1.15] text-heading sm:text-[2.75rem]",
+  h2: "font-display text-[1.75rem] font-bold leading-[1.15] text-heading sm:text-[2.375rem]",
 };
 
 export function PageHeading({

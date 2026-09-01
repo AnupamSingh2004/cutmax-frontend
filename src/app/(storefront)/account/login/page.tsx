@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
-      <h1 className="text-2xl font-bold text-navy-900">Sign in</h1>
+      <h1 className="text-2xl font-bold text-heading">Sign in</h1>
       <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
         <Input label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input label="Password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -41,7 +41,7 @@ export default function LoginPage() {
       </form>
       <p className="mt-4 text-sm text-muted">
         No account?{" "}
-        <Link href="/account/register" className="font-semibold text-navy-900 hover:underline">
+        <Link href="/account/register" className="font-semibold text-heading hover:underline">
           Register here
         </Link>
       </p>

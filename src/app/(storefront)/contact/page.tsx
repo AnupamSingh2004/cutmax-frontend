@@ -10,8 +10,8 @@ const PHONE1 = "+91 88568 28894";
 const PHONE2 = "+91 96991 92248";
 const GSTIN = "27AAPFC6278B1Z9";
 
-const inputClass = "w-full rounded-[3px] border border-border px-3.5 py-3 text-[14.5px] outline-none focus:border-navy-700";
-const labelClass = "mb-1.5 block text-[13px] font-semibold text-navy-900";
+const inputClass = "w-full rounded-[3px] border border-border bg-surface px-3.5 py-3 text-[14.5px] text-heading outline-none focus:border-navy-700";
+const labelClass = "mb-1.5 block text-[13px] font-semibold text-heading";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -40,31 +40,31 @@ export default function ContactPage() {
         <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-14 lg:grid-cols-2">
           <div>
             <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div className="rounded-[4px] bg-white p-6">
+              <div className="rounded-[4px] bg-surface p-6">
                 <div className="mb-2.5 text-xs font-bold tracking-[0.08em] text-muted">PRIMARY CONTACT</div>
-                <div className="font-display mb-2 text-[17px] font-bold text-navy-900">Pratap Narayan Mourya</div>
+                <div className="font-display mb-2 text-[17px] font-bold text-heading">Pratap Narayan Mourya</div>
                 <div className="text-sm leading-relaxed text-muted-soft">{ADDRESS}</div>
               </div>
-              <div className="rounded-[4px] bg-white p-6">
+              <div className="rounded-[4px] bg-surface p-6">
                 <div className="mb-2.5 text-xs font-bold tracking-[0.08em] text-muted">WHATSAPP / PHONE</div>
-                <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="font-display mb-1.5 block text-[17px] font-bold text-navy-900">
+                <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="font-display mb-1.5 block text-[17px] font-bold text-heading">
                   {PHONE1}
                 </a>
                 <div className="text-[13.5px] text-muted-soft">Fastest way to reach our sales team.</div>
               </div>
-              <div className="rounded-[4px] bg-white p-6">
+              <div className="rounded-[4px] bg-surface p-6">
                 <div className="mb-2.5 text-xs font-bold tracking-[0.08em] text-muted">SECONDARY CONTACT</div>
-                <div className="font-display mb-1.5 text-[17px] font-bold text-navy-900">{PHONE2}</div>
+                <div className="font-display mb-1.5 text-[17px] font-bold text-heading">{PHONE2}</div>
                 <div className="text-[13.5px] text-muted-soft">Display only.</div>
               </div>
-              <div className="rounded-[4px] bg-white p-6">
+              <div className="rounded-[4px] bg-surface p-6">
                 <div className="mb-2.5 text-xs font-bold tracking-[0.08em] text-muted">EMAIL &amp; GSTIN</div>
-                <div className="font-display mb-1.5 text-[15.5px] font-bold text-navy-900">{EMAIL}</div>
+                <div className="font-display mb-1.5 text-[15.5px] font-bold text-heading">{EMAIL}</div>
                 <div className="text-[13.5px] text-muted-soft">GSTIN {GSTIN}</div>
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[4px] bg-white">
+            <div className="overflow-hidden rounded-[4px] bg-surface">
               <iframe
                 title="Cutmax Technologies location"
                 src="https://www.google.com/maps?q=18.684178,73.805943&z=16&output=embed"
@@ -78,15 +78,15 @@ export default function ContactPage() {
                 href="https://maps.app.goo.gl/qTvWXJBfKddMuemg7?g_st=ac"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block px-6 py-3.5 text-center text-[13.5px] font-bold text-navy-900 hover:bg-bg-soft"
+                className="block px-6 py-3.5 text-center text-[13.5px] font-bold text-heading hover:bg-bg-soft"
               >
                 Get directions on Google Maps →
               </a>
             </div>
           </div>
 
-          <div className="rounded-[4px] bg-white p-7 sm:p-10">
-            <div className="font-display mb-1.5 text-xl font-bold text-navy-900">Send a requirement</div>
+          <div className="rounded-[4px] bg-surface p-7 sm:p-10">
+            <div className="font-display mb-1.5 text-xl font-bold text-heading">Send a requirement</div>
             <p className="mb-6 text-sm text-muted-soft">Fill this in and we&apos;ll follow up on WhatsApp or by phone.</p>
             <div className="flex flex-col gap-4">
               <div>

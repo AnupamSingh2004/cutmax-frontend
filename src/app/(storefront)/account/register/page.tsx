@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
-      <h1 className="text-2xl font-bold text-navy-900">Create an account</h1>
+      <h1 className="text-2xl font-bold text-heading">Create an account</h1>
       <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
         <Input label="Full name" required value={form.name} onChange={(e) => set("name", e.target.value)} />
         <Input label="Email" type="email" required value={form.email} onChange={(e) => set("email", e.target.value)} />
@@ -54,7 +54,7 @@ export default function RegisterPage() {
       </form>
       <p className="mt-4 text-sm text-muted">
         Already have an account?{" "}
-        <Link href="/account/login" className="font-semibold text-navy-900 hover:underline">
+        <Link href="/account/login" className="font-semibold text-heading hover:underline">
           Sign in
         </Link>
       </p>

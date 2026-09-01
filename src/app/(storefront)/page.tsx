@@ -115,8 +115,8 @@ export default async function HomePage() {
               { title: "Enquiry-first workflow", desc: "Add what you need to an enquiry bag, review GST-inclusive pricing, and send it straight to our sales team on WhatsApp." },
               { title: "Built for bulk buyers", desc: "Multi-line requirements, repeat orders and distributor accounts, backed by GST-registered invoicing on every quote." },
             ].map((f) => (
-              <div key={f.title} className="rounded-[4px] border-t-[3px] border-red-600 bg-white p-9 pt-8">
-                <h3 className="font-display mb-3 text-[19px] font-bold text-navy-900">{f.title}</h3>
+              <div key={f.title} className="rounded-[4px] border-t-[3px] border-red-600 bg-surface p-9 pt-8">
+                <h3 className="font-display mb-3 text-[19px] font-bold text-heading">{f.title}</h3>
                 <p className="text-[15px] leading-relaxed text-muted-soft">{f.desc}</p>
               </div>
             ))}
@@ -125,7 +125,7 @@ export default async function HomePage() {
       </section>
 
       {/* ════════ Product Range ════════ */}
-      <section className="bg-white">
+      <section className="bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:py-24">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <PageHeading eyebrow="Product Range" title="Browse the catalogue by category" />
@@ -143,11 +143,11 @@ export default async function HomePage() {
                   className="block rounded-[4px] bg-bg-soft p-7 transition-colors hover:bg-border"
                 >
                   <div className="mb-2.5 flex items-baseline justify-between gap-3">
-                    <span className="font-display text-[17px] font-bold text-navy-900">{cat.name}</span>
+                    <span className="font-display text-[17px] font-bold text-heading">{cat.name}</span>
                     <span className="whitespace-nowrap text-xs font-bold text-red-600">{count > 0 ? `${count} SKUs` : "Enquire"}</span>
                   </div>
                   <div className="mb-4 text-[13.5px] leading-relaxed text-muted-soft">{cat.subCategories.join(" · ")}</div>
-                  <div className="text-[13.5px] font-bold text-navy-900">Browse category →</div>
+                  <div className="text-[13.5px] font-bold text-heading">Browse category →</div>
                 </Link>
               );
             })}
@@ -163,12 +163,12 @@ export default async function HomePage() {
               <span className="h-[2px] w-7 bg-red-600" />
               <span className="text-[13px] font-bold tracking-[0.14em] text-red-600">IN STOCK NOW</span>
             </div>
-            <h2 className="font-display mb-12 text-[1.75rem] font-bold text-navy-900 sm:text-[2.375rem]">Featured from the catalogue</h2>
+            <h2 className="font-display mb-12 text-[1.75rem] font-bold text-heading sm:text-[2.375rem]">Featured from the catalogue</h2>
             <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
               {featured.map((p) => {
                 const low = p.stock <= settings.low_stock;
                 return (
-                  <Link key={p.sku} href={`/products/${p.sku}`} className="block overflow-hidden rounded-[4px] bg-white transition-transform hover:-translate-y-1">
+                  <Link key={p.sku} href={`/products/${p.sku}`} className="block overflow-hidden rounded-[4px] bg-surface transition-transform hover:-translate-y-1">
                     <div className="relative aspect-square bg-bg-soft">
                       <Image src={productImageSrc(p)} alt={p.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-contain p-4" />
                       <div className="absolute left-3 top-3 rounded-[3px] bg-navy-900 px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-white">
@@ -181,10 +181,10 @@ export default async function HomePage() {
                     </div>
                     <div className="p-5">
                       <div className="mb-1.5 text-[11px] font-bold tracking-wide text-red-600">{p.subCategory}</div>
-                      <div className="font-display mb-1 truncate text-[15.5px] font-semibold text-navy-900">{p.name}</div>
+                      <div className="font-display mb-1 truncate text-[15.5px] font-semibold text-heading">{p.name}</div>
                       <div className="mb-3.5 text-[12.5px] text-muted">SKU {p.sku}</div>
                       <div className="flex items-center justify-between gap-2.5">
-                        <span className="font-display text-lg font-bold text-navy-900">₹{p.price.toFixed(2)}</span>
+                        <span className="font-display text-lg font-bold text-heading">₹{p.price.toFixed(2)}</span>
                         <span className="rounded-[3px] bg-navy-900 px-3.5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-navy-700">View</span>
                       </div>
                     </div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 import { MegaMenu } from "@/components/storefront/MegaMenu";
+import { ThemeSwitcher } from "@/components/storefront/ThemeSwitcher";
 import { useCartStore } from "@/lib/cart-store";
 import { useCustomerSession } from "@/lib/session";
 
@@ -59,13 +60,13 @@ export function Nav() {
       </div>
 
       {/* ── Main header ── */}
-      <header className="sticky top-0 z-40 border-b border-border bg-white">
+      <header className="sticky top-0 z-40 border-b border-border bg-surface">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
             <Image src="/logo.png" alt="CutMax Technologies" width={160} height={50} className="h-9 w-auto" priority />
             <div className="hidden sm:block">
-              <div className="font-display text-[19px] font-extrabold leading-none tracking-tight text-navy-900">CUTMAX</div>
+              <div className="font-display text-[19px] font-extrabold leading-none tracking-tight text-heading">CUTMAX</div>
               <div className="mt-0.5 text-[10px] tracking-[0.13em] text-muted">TECHNOLOGIES</div>
             </div>
           </Link>
@@ -74,7 +75,7 @@ export function Nav() {
           <div className="relative hidden flex-1 items-center md:flex" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex shrink-0 items-center gap-2 rounded-l-[3px] border border-r border-border bg-[#EDEEF1] px-3.5 py-3 text-[13px] font-semibold text-navy-900 hover:bg-border"
+              className="flex shrink-0 items-center gap-2 rounded-l-[3px] border border-r border-border bg-border px-3.5 py-3 text-[13px] font-semibold text-heading hover:bg-border"
             >
               All Categories
               <svg className={`h-3 w-3 transition-transform ${menuOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
@@ -100,7 +101,9 @@ export function Nav() {
           </div>
 
           {/* Right actions */}
-          <nav className="ml-auto flex items-center gap-2.5 text-sm font-medium text-navy-900 sm:gap-2.5">
+          <nav className="ml-auto flex items-center gap-2.5 text-sm font-medium text-heading sm:gap-2.5">
+            <ThemeSwitcher />
+
             <Link
               href={customer ? "/account/my-enquiries" : "/account/login"}
               className="hidden items-center gap-1.5 rounded-[3px] border border-border bg-bg-soft px-3.5 py-2.5 text-[13.5px] font-semibold hover:bg-border sm:flex"
@@ -153,7 +156,7 @@ export function Nav() {
 
         {/* ── Mobile drawer ── */}
         {mobileOpen && (
-          <div className="border-t border-border bg-white px-4 py-4 md:hidden">
+          <div className="border-t border-border bg-surface px-4 py-4 md:hidden">
             {/* Mobile: All Categories + Search */}
             <div className="mb-3 flex">
               <button
@@ -168,7 +171,7 @@ export function Nav() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search for products, categories, SKU..."
-                  className="w-full border border-l-0 border-border px-4 py-2.5 text-sm focus:outline-none"
+                  className="w-full border border-l-0 border-border bg-surface px-4 py-2.5 text-sm text-heading focus:outline-none"
                 />
                 <button type="submit" className="flex shrink-0 items-center justify-center rounded-r-md border border-l-0 border-border bg-navy-900 px-3 text-white">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -180,7 +183,11 @@ export function Nav() {
                 <MegaMenu onNavigate={() => { setMenuOpen(false); setMobileOpen(false); }} onClose={() => setMenuOpen(false)} />
               </div>
             )}
-            <div className="flex flex-col gap-1 text-sm font-medium text-navy-900">
+            <div className="mb-2 flex items-center justify-between rounded-md px-3 py-1">
+              <span className="text-sm font-medium text-heading">Theme</span>
+              <ThemeSwitcher />
+            </div>
+            <div className="flex flex-col gap-1 text-sm font-medium text-heading">
               <Link href="/" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">Home</Link>
               <Link href="/products" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">Products</Link>
               <Link href="/about" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">About Us</Link>

@@ -63,9 +63,9 @@ export default function CheckoutPage() {
   if (reference) {
     return (
       <div className="mx-auto max-w-lg px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold text-navy-900">Enquiry submitted!</h1>
+        <h1 className="text-2xl font-bold text-heading">Enquiry submitted!</h1>
         <p className="mt-3 text-muted">
-          Your reference is <span className="font-semibold text-navy-900">{reference}</span>. We&apos;ve opened WhatsApp so you
+          Your reference is <span className="font-semibold text-heading">{reference}</span>. We&apos;ve opened WhatsApp so you
           can send it directly to our sales team.
         </p>
         <Button className="mt-6" onClick={() => router.push("/products")}>
@@ -78,7 +78,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-lg px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold text-navy-900">Your bag is empty</h1>
+        <h1 className="text-2xl font-bold text-heading">Your bag is empty</h1>
         <Button className="mt-6" onClick={() => router.push("/products")}>
           Browse products
         </Button>
@@ -88,7 +88,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="mb-8 text-2xl font-bold text-navy-900">Checkout</h1>
+      <h1 className="mb-8 text-2xl font-bold text-heading">Checkout</h1>
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
         <form onSubmit={submit} className="flex flex-col gap-4 lg:col-span-2">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -115,8 +115,8 @@ export default function CheckoutPage() {
           </Button>
         </form>
 
-        <div className="rounded-card-lg border border-border bg-white p-5 shadow-card">
-          <h2 className="mb-4 font-semibold text-navy-900">Order Summary</h2>
+        <div className="rounded-card-lg border border-border bg-surface p-5 shadow-card">
+          <h2 className="mb-4 font-semibold text-heading">Order Summary</h2>
           <div className="flex flex-col gap-2 text-sm">
             {items.map((i) => (
               <div key={i.sku} className="flex justify-between text-muted">
@@ -136,7 +136,7 @@ export default function CheckoutPage() {
               <span>GST ({GST_RATE}%)</span>
               <span>₹{gstAmount.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-base font-bold text-navy-900">
+            <div className="flex justify-between text-base font-bold text-heading">
               <span>Total</span>
               <span>₹{grandTotal.toFixed(2)}</span>
             </div>
