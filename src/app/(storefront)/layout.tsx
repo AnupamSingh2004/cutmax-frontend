@@ -7,7 +7,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
   const settings = await getPublicSettings();
 
   return (
-    <div id="storefront-shell" className="flex min-h-screen flex-col bg-bg-soft">
+    <div id="storefront-shell" className="flex min-h-screen flex-col bg-bg-soft" suppressHydrationWarning>
       {/* Applies the saved (or system-default) theme before paint, scoped to
           just this subtree — admin is untouched regardless of what a
           storefront visitor has chosen. */}
