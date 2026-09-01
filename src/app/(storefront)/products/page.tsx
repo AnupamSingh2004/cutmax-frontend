@@ -46,6 +46,12 @@ function ProductsPageInner() {
   const q = searchParams.get("q") ?? "";
   const page = Number(searchParams.get("page") ?? 1);
   const [inStockOnly, setInStockOnly] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileFiltersOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileFiltersOpen]);
 
   const [data, setData] = useState<ProductsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -113,19 +119,8 @@ function ProductsPageInner() {
         <FilterSidebar filters={filters} onChange={updateFilters} />
 
         <main className="min-w-0 px-4 py-9 sm:px-8 lg:px-12">
-          <div className="sticky top-[110px] z-10 mb-5 flex flex-wrap items-center gap-3 rounded-[4px] bg-surface p-4 sm:gap-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
-            {/* Categories collapse into this same bar on mobile — the full sidebar list (desktop only) would otherwise push the whole page down before you ever see a product. */}
-            <select
-              value={filters.category ?? ""}
-              onChange={(e) => updateFilters({ category: e.target.value || undefined, sub: undefined })}
-              className="w-full rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading sm:hidden"
-            >
-              <option value="">All Categories</option>
-              {TAXONOMY.map((c) => (
-                <option key={c.name} value={c.name}>{c.name}</option>
-              ))}
-            </select>
-
+          {/* Desktop/tablet filter bar — unchanged structure, hidden on mobile where it collapses into the Categories button below */}
+          <div className="sticky top-[110px] z-10 mb-5 hidden flex-wrap items-center gap-3 rounded-[4px] bg-surface p-4 sm:flex sm:gap-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
             <div className="whitespace-nowrap text-[14.5px] font-semibold text-heading">
               {data ? `${visibleProducts.length} of ${data.total} results` : "Loading…"}
             </div>
@@ -176,6 +171,122 @@ function ProductsPageInner() {
               </select>
             </div>
           </div>
+
+          {/* Mobile filter bar — everything collapses behind one Categories button instead of a stack of controls */}
+          <div className="sticky top-[92px] z-10 mb-5 flex items-center justify-between gap-3 rounded-[4px] bg-surface p-3.5 sm:hidden" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
+            <div className="whitespace-nowrap text-[13.5px] font-semibold text-heading">
+              {data ? `${visibleProducts.length} of ${data.total} results` : "Loading…"}
+            </div>
+            <button
+              onClick={() => setMobileFiltersOpen(true)}
+              className="flex shrink-0 items-center gap-1.5 rounded-[3px] bg-navy-900 px-3.5 py-2 text-[13px] font-semibold text-white"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M6 8h12M9 12h6M11 16h2" /></svg>
+              Categories{filters.category ? `: ${filters.category}` : ""}
+            </button>
+          </div>
+
+          {/* Mobile filter sheet — Categories + Brand/Material/Sort/In-stock, opened by the button above */}
+          {mobileFiltersOpen && (
+            <div className="fixed inset-0 z-50 sm:hidden">
+              <button
+                aria-label="Close filters"
+                className="absolute inset-0 bg-navy-950/60"
+                onClick={() => setMobileFiltersOpen(false)}
+              />
+              <div className="absolute inset-x-0 bottom-0 flex max-h-[85vh] flex-col rounded-t-[8px] bg-surface">
+                <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3.5">
+                  <span className="font-display text-[16px] font-bold text-heading">Categories &amp; Filters</span>
+                  <button onClick={() => setMobileFiltersOpen(false)} aria-label="Close" className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-bg-soft">
+                    <svg className="h-5 w-5 text-heading" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto px-4 py-4">
+                  <div className="mb-1.5 text-xs font-bold tracking-[0.08em] text-muted">CATEGORIES</div>
+                  <div className="mb-4 flex flex-col gap-1">
+                    <button
+                      onClick={() => updateFilters({ category: undefined, sub: undefined })}
+                      className={`rounded-md px-3 py-2 text-left text-sm font-semibold ${!filters.category ? "bg-navy-900 text-white" : "text-heading hover:bg-bg-soft"}`}
+                    >
+                      All Products
+                    </button>
+                    {TAXONOMY.map((c) => (
+                      <button
+                        key={c.name}
+                        onClick={() => updateFilters({ category: c.name, sub: undefined })}
+                        className={`rounded-md px-3 py-2 text-left text-sm font-semibold ${filters.category === c.name ? "bg-navy-900 text-white" : "text-heading hover:bg-bg-soft"}`}
+                      >
+                        {c.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setInStockOnly((v) => !v)}
+                    className="mb-4 w-full rounded-[3px] border px-3.5 py-2.5 text-[13.5px] font-semibold transition-colors"
+                    style={inStockOnly ? { background: "var(--color-navy-900)", color: "#fff", borderColor: "var(--color-navy-900)" } : { background: "var(--color-surface)", color: "var(--color-heading)", borderColor: "var(--color-border)" }}
+                  >
+                    In stock only
+                  </button>
+
+                  {(data?.brands.length ?? 0) > 0 && (
+                    <div className="mb-3">
+                      <label className="mb-1 block text-xs font-bold tracking-[0.08em] text-muted">BRAND</label>
+                      <select
+                        value={filters.brand ?? ""}
+                        onChange={(e) => updateFilters({ brand: e.target.value || undefined })}
+                        className="w-full rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading"
+                      >
+                        <option value="">All Brands</option>
+                        {data!.brands.map((b) => (
+                          <option key={b} value={b}>{b}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {(data?.materials.length ?? 0) > 0 && (
+                    <div className="mb-3">
+                      <label className="mb-1 block text-xs font-bold tracking-[0.08em] text-muted">MATERIAL</label>
+                      <select
+                        value={filters.material ?? ""}
+                        onChange={(e) => updateFilters({ material: e.target.value || undefined })}
+                        className="w-full rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading"
+                      >
+                        <option value="">All Materials</option>
+                        {data!.materials.map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  <div className="mb-2">
+                    <label className="mb-1 block text-xs font-bold tracking-[0.08em] text-muted">SORT BY</label>
+                    <select
+                      value={filters.sort}
+                      onChange={(e) => updateFilters({ sort: e.target.value })}
+                      className="w-full rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading"
+                    >
+                      {SORT_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="shrink-0 border-t border-border p-4">
+                  <button
+                    onClick={() => setMobileFiltersOpen(false)}
+                    className="w-full rounded-[3px] bg-red-600 px-4 py-3 text-sm font-bold text-white"
+                  >
+                    Show {data ? visibleProducts.length : ""} Results
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
