@@ -24,7 +24,7 @@ export function FilterSidebar({
   onChange: (next: Partial<Filters>) => void;
 }) {
   return (
-    <aside className="w-full border-border bg-surface sm:border-r">
+    <aside className="hidden border-border bg-surface sm:block sm:border-r">
       <div className="flex flex-col gap-2 p-6 sm:sticky sm:top-[110px] sm:max-h-[calc(100vh-110px)] sm:overflow-y-auto">
         <div className="mb-3 text-sm font-bold tracking-[0.08em] text-muted">CATEGORIES</div>
         <button onClick={() => onChange({ category: undefined, sub: undefined })} className={navBtnClass(!filters.category)}>

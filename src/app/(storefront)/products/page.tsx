@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
 import type { Product, PublicSettings } from "@/lib/types";
+import { TAXONOMY } from "@/lib/taxonomy";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { FilterSidebar, type Filters } from "@/components/storefront/FilterSidebar";
 import { ProductCardSkeleton } from "@/components/ui/Skeleton";
@@ -112,7 +113,19 @@ function ProductsPageInner() {
         <FilterSidebar filters={filters} onChange={updateFilters} />
 
         <main className="min-w-0 px-4 py-9 sm:px-8 lg:px-12">
-          <div className="sticky top-[110px] z-10 mb-5 flex flex-wrap items-center gap-4 rounded-[4px] bg-surface p-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
+          <div className="sticky top-[110px] z-10 mb-5 flex flex-wrap items-center gap-3 rounded-[4px] bg-surface p-4 sm:gap-4" style={{ boxShadow: "0 2px 8px rgba(18,32,63,0.06)" }}>
+            {/* Categories collapse into this same bar on mobile — the full sidebar list (desktop only) would otherwise push the whole page down before you ever see a product. */}
+            <select
+              value={filters.category ?? ""}
+              onChange={(e) => updateFilters({ category: e.target.value || undefined, sub: undefined })}
+              className="w-full rounded-[3px] border border-border bg-surface px-3 py-2.5 text-[13.5px] font-semibold text-heading sm:hidden"
+            >
+              <option value="">All Categories</option>
+              {TAXONOMY.map((c) => (
+                <option key={c.name} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+
             <div className="whitespace-nowrap text-[14.5px] font-semibold text-heading">
               {data ? `${visibleProducts.length} of ${data.total} results` : "Loading…"}
             </div>

@@ -142,6 +142,22 @@ export function Nav() {
           </nav>
         </div>
 
+        {/* ── Persistent mobile search bar — always visible, not gated behind the hamburger ── */}
+        <div className="border-t border-border bg-bg-soft px-4 py-2.5 md:hidden">
+          <form onSubmit={onSearch} className="flex items-center rounded-[3px] border border-border bg-surface">
+            <svg className="ml-3 h-4 w-4 shrink-0 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="7" /><path strokeLinecap="round" d="M21 21l-4.35-4.35" /></svg>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search end mills, categories, SKU…"
+              className="w-full bg-transparent px-3 py-2.5 text-sm text-heading focus:outline-none"
+            />
+            <button type="submit" aria-label="Search" className="flex shrink-0 items-center rounded-r-[2px] bg-navy-900 px-4 py-2.5 text-[13px] font-bold text-white">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="7" /><path strokeLinecap="round" d="M21 21l-4.35-4.35" /></svg>
+            </button>
+          </form>
+        </div>
+
         {/* ── Secondary nav bar — dark navy strip ── */}
         <div className="hidden bg-navy-900 md:block">
           <div className="mx-auto flex max-w-7xl items-center gap-8 px-4 py-3.5 text-sm font-semibold text-white/75">
@@ -166,26 +182,15 @@ export function Nav() {
         {/* ── Mobile drawer ── */}
         {mobileOpen && (
           <div className="border-t border-border bg-surface px-4 py-4 md:hidden">
-            {/* Mobile: All Categories + Search */}
+            {/* Mobile: All Categories — search now lives in the persistent bar above */}
             <div className="mb-3 flex">
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="flex shrink-0 items-center gap-2 rounded-l-md bg-navy-900 px-4 py-2.5 text-sm font-semibold text-white"
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-navy-900 px-4 py-2.5 text-sm font-semibold text-white"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                All
+                All Categories
               </button>
-              <form onSubmit={onSearch} className="flex flex-1">
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search for products, categories, SKU..."
-                  className="w-full border border-l-0 border-border bg-surface px-4 py-2.5 text-sm text-heading focus:outline-none"
-                />
-                <button type="submit" className="flex shrink-0 items-center justify-center rounded-r-md border border-l-0 border-border bg-navy-900 px-3 text-white">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                </button>
-              </form>
             </div>
             {menuOpen && (
               <div className="mb-3">
