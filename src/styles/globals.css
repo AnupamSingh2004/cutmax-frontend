@@ -59,12 +59,12 @@
    already-dark, intentionally-branded surfaces (header, hero, footer, CTAs)
    that don't need to change. */
 [data-theme="dark"] {
-  --color-muted: #8b96ad;
-  --color-muted-soft: #b7bfd1;
-  --color-line: #262f45;
-  --color-border: #262f45;
-  --color-surface: #121a2e;
-  --color-bg-soft: #0a1120;
+  --color-muted: #97a3c0;
+  --color-muted-soft: #c5cce0;
+  --color-line: #2e3f66;
+  --color-border: #2e3f66;
+  --color-surface: #182848;
+  --color-bg-soft: #101d3a;
   --color-heading: #eef1f8;
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.28);
