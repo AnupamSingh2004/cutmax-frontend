@@ -164,7 +164,7 @@ export default async function HomePage() {
               <span className="text-[13px] font-bold tracking-[0.14em] text-red-600">IN STOCK NOW</span>
             </div>
             <h2 className="font-display mb-12 text-[1.75rem] font-bold text-heading sm:text-[2.375rem]">Featured from the catalogue</h2>
-            <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {featured.map((p) => {
                 const low = p.stock <= settings.low_stock;
                 return (

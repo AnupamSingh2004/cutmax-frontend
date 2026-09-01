@@ -8,7 +8,7 @@ export function MegaMenu({ onNavigate, onClose }: { onNavigate: () => void; onCl
     <>
       {/* Backdrop for click-outside */}
       <button aria-label="Close menu" className="fixed inset-0 z-30 cursor-default" onClick={onClose} />
-      <div className="absolute left-0 top-full z-40 mt-0 grid w-[680px] grid-cols-2 gap-0 border border-border bg-surface shadow-card-hover">
+      <div className="absolute left-0 top-full z-40 mt-0 grid w-[calc(100vw-2rem)] grid-cols-1 gap-0 border border-border bg-surface shadow-card-hover sm:w-[680px] sm:grid-cols-2 max-h-[70vh] overflow-y-auto">
         {TAXONOMY.map((category) => (
           <div key={category.name} className="border-b border-r border-border p-4 last:border-r-0 [&:nth-last-child(-n+2)]:border-b-0">
             <Link

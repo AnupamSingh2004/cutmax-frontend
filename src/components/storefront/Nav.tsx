@@ -101,8 +101,10 @@ export function Nav() {
           </div>
 
           {/* Right actions */}
-          <nav className="ml-auto flex items-center gap-2.5 text-sm font-medium text-heading sm:gap-2.5">
-            <ThemeSwitcher />
+          <nav className="ml-auto flex items-center gap-1.5 text-sm font-medium text-heading sm:gap-2.5">
+            <div className="hidden sm:block">
+              <ThemeSwitcher />
+            </div>
 
             <Link
               href={customer ? "/account/my-enquiries" : "/account/login"}
@@ -113,22 +115,29 @@ export function Nav() {
 
             <button
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-1.5 rounded-[3px] border border-border bg-bg-soft px-3.5 py-2.5 text-[13.5px] font-semibold transition-colors hover:bg-border"
+              aria-label="Enquiry bag"
+              className="relative flex items-center gap-1.5 rounded-[3px] border border-border bg-bg-soft px-2.5 py-2.5 text-[13.5px] font-semibold transition-colors hover:bg-border sm:px-3.5"
             >
-              <svg className="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="none"><path d="M4 6h16l-1.5 10h-13z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /><circle cx="9" cy="20" r="1.4" fill="currentColor" /><circle cx="17" cy="20" r="1.4" fill="currentColor" /></svg>
-              Enquiry Bag
+              <svg className="h-[17px] w-[17px] shrink-0" viewBox="0 0 24 24" fill="none"><path d="M4 6h16l-1.5 10h-13z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /><circle cx="9" cy="20" r="1.4" fill="currentColor" /><circle cx="17" cy="20" r="1.4" fill="currentColor" /></svg>
+              <span className="hidden sm:inline">Enquiry Bag</span>
               <span className="rounded-[3px] bg-red-600 px-1.5 py-0.5 text-[11px] font-extrabold text-white">{count}</span>
             </button>
 
             <Link
               href="/contact"
-              className="rounded-[3px] bg-red-600 px-4.5 py-2.5 text-[13.5px] font-bold text-white transition-colors hover:bg-red-700"
+              className="hidden rounded-[3px] bg-red-600 px-4.5 py-2.5 text-[13.5px] font-bold text-white transition-colors hover:bg-red-700 sm:block"
             >
               Request a Quote
             </Link>
 
-            <button className="md:hidden" onClick={() => setMobileOpen((v) => !v)} aria-label="Menu">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <button className="flex h-9 w-9 shrink-0 items-center justify-center md:hidden" onClick={() => setMobileOpen((v) => !v)} aria-label="Menu">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {mobileOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
             </button>
           </nav>
         </div>
@@ -188,18 +197,27 @@ export function Nav() {
               <ThemeSwitcher />
             </div>
             <div className="flex flex-col gap-1 text-sm font-medium text-heading">
-              <Link href="/" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">Home</Link>
-              <Link href="/products" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">Products</Link>
-              <Link href="/about" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">About Us</Link>
-              <Link href="/contact" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">Contact Us</Link>
-              <Link href={customer ? "/account/my-enquiries" : "/account/login"} onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2 hover:bg-bg-soft">
+              <Link href="/" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2.5 hover:bg-bg-soft">Home</Link>
+              <Link href="/products" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2.5 hover:bg-bg-soft">Products</Link>
+              <Link href="/about" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2.5 hover:bg-bg-soft">About Us</Link>
+              <Link href="/contact" onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2.5 hover:bg-bg-soft">Contact Us</Link>
+              <Link href={customer ? "/account/my-enquiries" : "/account/login"} onClick={() => setMobileOpen(false)} className="rounded-md px-3 py-2.5 hover:bg-bg-soft">
                 {customer ? "My Enquiries" : "Sign In"}
+              </Link>
+            </div>
+            <div className="mt-3 flex flex-col gap-2">
+              <Link
+                href="/contact"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center rounded-md bg-red-600 px-4 py-2.5 text-sm font-bold text-white"
+              >
+                Request a Quote
               </Link>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20CutMax%2C%20I%27m%20interested%20in%20your%20products.`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 flex items-center justify-center gap-2 rounded-md bg-green-500 px-4 py-2.5 text-sm font-semibold text-white"
+                className="flex items-center justify-center gap-2 rounded-md bg-green-500 px-4 py-2.5 text-sm font-semibold text-white"
               >
                 WhatsApp Us
               </a>

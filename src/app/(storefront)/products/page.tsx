@@ -165,7 +165,7 @@ function ProductsPageInner() {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
@@ -187,7 +187,7 @@ function ProductsPageInner() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                 {visibleProducts.map((p) => (
                   <ProductCard key={p.id} product={p} lowStockLimit={data!.settings.low_stock} />
                 ))}

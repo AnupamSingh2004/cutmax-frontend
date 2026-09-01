@@ -27,7 +27,7 @@ export default function AboutPage() {
             <p className="mb-8 text-[15.5px] leading-relaxed text-muted-soft">
               Every enquiry is handled directly by our sales team, with GST-registered invoicing on every order.
             </p>
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
               <div className="rounded-[4px] bg-surface p-4.5">
                 <div className="mb-1 text-xs text-muted">Location</div>
                 <div className="text-[14.5px] font-bold text-heading">Pune, Maharashtra</div>

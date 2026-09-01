@@ -55,7 +55,7 @@ export function ProductDetailView({ product, priceBreaks, related }: { product: 
             </div>
           )}
 
-          <div className="mt-6 flex items-center gap-3">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <input
               type="number"
               min={1}
@@ -147,7 +147,7 @@ export function ProductDetailView({ product, priceBreaks, related }: { product: 
       {related.length > 0 && (
         <section className="mt-16">
           <h2 className="mb-6 text-xl font-bold text-heading">Related Products</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} lowStockLimit={10} />
             ))}
