@@ -41,6 +41,11 @@ export interface PublicSettings {
   low_stock: number;
   hero_video_url?: string;
   site_background_video_url?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  company_name?: string;
+  company_address?: string;
+  company_phone?: string;
 }
 
 export interface MediaAsset {

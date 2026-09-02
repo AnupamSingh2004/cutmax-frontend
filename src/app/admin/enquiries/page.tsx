@@ -61,6 +61,7 @@ export default function AdminEnquiriesPage() {
             <tr>
               <th className="px-4 py-3">Reference</th>
               <th className="px-4 py-3">Customer</th>
+              <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Total</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Date</th>
@@ -79,6 +80,7 @@ export default function AdminEnquiriesPage() {
                   <br />
                   <span className="text-xs text-muted">{enq.phone}</span>
                 </td>
+                <td className="px-4 py-2 text-muted">{enq.company ?? "-"}</td>
                 <td className="px-4 py-2">₹{enq.grandTotal.toFixed(2)}</td>
                 <td className="px-4 py-2">
                   <Badge tone={STATUS_TONE[enq.status]}>{enq.status}</Badge>

@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { PageHeading } from "@/components/ui/PageHeading";
+import { getPublicSettings } from "@/lib/settings";
 
-const WHATSAPP_NUMBER = "918856828894";
-const ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune, Maharashtra 411062, India";
+const DEFAULT_WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune, Maharashtra 411062, India";
 const GSTIN = "27AAPFC6278B1Z9";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const settings = await getPublicSettings();
+  const WHATSAPP_NUMBER = settings.whatsapp || DEFAULT_WHATSAPP_NUMBER;
+  const ADDRESS = settings.company_address || DEFAULT_ADDRESS;
   return (
     <div>
       <section className="bg-navy-900 px-4 py-14 sm:px-12 sm:py-[88px]">

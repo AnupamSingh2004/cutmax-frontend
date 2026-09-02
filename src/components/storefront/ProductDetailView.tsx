@@ -8,11 +8,14 @@ import { Button } from "@/components/ui/Button";
 import { stockBadge } from "@/components/ui/Badge";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { useCartStore } from "@/lib/cart-store";
+import { useSettings } from "@/lib/settings-context";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/lib/taxonomy";
 
-const WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_WHATSAPP_NUMBER = "918856828894";
 
 export function ProductDetailView({ product, priceBreaks, related }: { product: Product; priceBreaks: PriceBreak[]; related: Product[] }) {
+  const settings = useSettings();
+  const WHATSAPP_NUMBER = settings.whatsapp || DEFAULT_WHATSAPP_NUMBER;
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((s) => s.addItem);
   const [imgSrc, setImgSrc] = useState(productImageSrc(product));

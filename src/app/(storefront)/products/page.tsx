@@ -21,7 +21,7 @@ interface ProductsResponse {
 }
 
 const PER_PAGE = 24;
-const WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_WHATSAPP_NUMBER = "918856828894";
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest" },
@@ -301,7 +301,7 @@ function ProductsPageInner() {
                 Try a different search term or filter, or send us your specification directly.
               </p>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                href={`https://wa.me/${data?.settings.whatsapp || DEFAULT_WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block rounded-[3px] bg-red-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700"

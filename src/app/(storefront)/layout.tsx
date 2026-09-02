@@ -2,6 +2,7 @@ import { Nav } from "@/components/storefront/Nav";
 import { Footer } from "@/components/storefront/Footer";
 import { SiteBackgroundVideo } from "@/components/storefront/SiteBackgroundVideo";
 import { getPublicSettings } from "@/lib/settings";
+import { SettingsProvider } from "@/lib/settings-context";
 
 export default async function StorefrontLayout({ children }: { children: React.ReactNode }) {
   const settings = await getPublicSettings();
@@ -16,13 +17,15 @@ export default async function StorefrontLayout({ children }: { children: React.R
           __html: `(function(){try{var t=localStorage.getItem("cutmax-theme");var d=t?t==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(d)document.getElementById("storefront-shell").setAttribute("data-theme","dark")}catch(e){}})()`,
         }}
       />
-      <SiteBackgroundVideo src={settings.site_background_video_url} />
-      <div className="site-watermark" aria-hidden="true">
-        CUTMAX <span>TECHNOLOGIES</span>
-      </div>
-      <Nav />
-      <main className="flex-1 bg-bg-soft">{children}</main>
-      <Footer />
+      <SettingsProvider value={settings}>
+        <SiteBackgroundVideo src={settings.site_background_video_url} />
+        <div className="site-watermark" aria-hidden="true">
+          CUTMAX <span>TECHNOLOGIES</span>
+        </div>
+        <Nav />
+        <main className="flex-1 bg-bg-soft">{children}</main>
+        <Footer settings={settings} />
+      </SettingsProvider>
     </div>
   );
 }

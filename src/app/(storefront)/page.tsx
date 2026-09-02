@@ -6,7 +6,10 @@ import { productImageSrc } from "@/lib/product-image";
 import type { Product, PublicSettings } from "@/lib/types";
 import { PageHeading } from "@/components/ui/PageHeading";
 
-const WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_HERO_TITLE = "Precision cutting tools, sourced without friction.";
+const DEFAULT_HERO_SUBTITLE =
+  "Cutmax Technologies supplies end mills, carbide inserts, tool holders and adapters for CNC machine shops across India. Browse live inventory, add what you need, and send the requirement straight to our sales team.";
 
 interface ProductsResponse {
   products: Product[];
@@ -64,10 +67,10 @@ export default async function HomePage() {
               <span className="text-[13px] font-bold tracking-[0.14em] text-orange-500">B2B INDUSTRIAL CATALOGUE</span>
             </div>
             <h1 className="font-display text-[2.1rem] font-extrabold leading-[1.1] tracking-tight text-white sm:text-[2.6rem] lg:text-[3.375rem]">
-              Precision cutting tools, sourced without friction.
+              {settings.hero_title || DEFAULT_HERO_TITLE}
             </h1>
             <p className="mt-5 max-w-lg text-[17.5px] leading-relaxed text-white/68">
-              Cutmax Technologies supplies end mills, carbide inserts, tool holders and adapters for CNC machine shops across India. Browse live inventory, add what you need, and send the requirement straight to our sales team.
+              {settings.hero_subtitle || DEFAULT_HERO_SUBTITLE}
             </p>
             <div className="mt-9 flex flex-wrap gap-3.5">
               <Link href="/products" className="rounded-[3px] bg-white px-7 py-[15px] text-[15px] font-bold text-navy-900 transition-colors hover:bg-border">
@@ -216,7 +219,7 @@ export default async function HomePage() {
           <p className="text-[15.5px] text-white/92">Send your specification straight to our sales team on WhatsApp and get a GST-ready quote back.</p>
         </div>
         <a
-          href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Cutmax%20Technologies%2C%20I%20have%20a%20bulk%20requirement.`}
+          href={`https://wa.me/${settings.whatsapp || DEFAULT_WHATSAPP_NUMBER}?text=Hi%20Cutmax%20Technologies%2C%20I%20have%20a%20bulk%20requirement.`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-[3px] bg-navy-900 px-8 py-4 text-[15.5px] font-bold text-white transition-colors hover:bg-navy-700"

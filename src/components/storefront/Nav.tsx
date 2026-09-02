@@ -9,15 +9,22 @@ import { MegaMenu } from "@/components/storefront/MegaMenu";
 import { ThemeSwitcher } from "@/components/storefront/ThemeSwitcher";
 import { useCartStore } from "@/lib/cart-store";
 import { useCustomerSession } from "@/lib/session";
+import { useSettings } from "@/lib/settings-context";
 import { TAXONOMY } from "@/lib/taxonomy";
 
-const WHATSAPP_NUMBER = "918856828894";
-const PHONE1 = "+91 8856828894";
+// Fallbacks if the admin hasn't filled these in under Settings yet — keeps
+// the header from ever going blank, and matches what was previously hardcoded.
+const DEFAULT_WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_PHONE = "+91 8856828894";
 const EMAIL = "officecutmax@gmail.com";
-const ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune - 411062";
+const DEFAULT_ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune - 411062";
 
 export function Nav() {
   const router = useRouter();
+  const settings = useSettings();
+  const WHATSAPP_NUMBER = settings.whatsapp || DEFAULT_WHATSAPP_NUMBER;
+  const PHONE1 = settings.company_phone || DEFAULT_PHONE;
+  const ADDRESS = settings.company_address || DEFAULT_ADDRESS;
   const items = useCartStore((s) => s.items);
   const count = items.reduce((sum, i) => sum + i.qty, 0);
   const { customer } = useCustomerSession();

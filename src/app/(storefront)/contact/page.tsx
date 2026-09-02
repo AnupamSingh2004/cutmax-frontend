@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { PageHeading } from "@/components/ui/PageHeading";
+import { useSettings } from "@/lib/settings-context";
 
-const WHATSAPP_NUMBER = "918856828894";
-const ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune, Maharashtra 411062, India";
+const DEFAULT_WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune, Maharashtra 411062, India";
 const EMAIL = "officecutmax@gmail.com";
-const PHONE1 = "+91 88568 28894";
+const DEFAULT_PHONE1 = "+91 88568 28894";
 const PHONE2 = "+91 96991 92248";
 const GSTIN = "27AAPFC6278B1Z9";
 
@@ -14,6 +15,10 @@ const inputClass = "w-full rounded-[3px] border border-border bg-surface px-3.5 
 const labelClass = "mb-1.5 block text-[13px] font-semibold text-heading";
 
 export default function ContactPage() {
+  const settings = useSettings();
+  const WHATSAPP_NUMBER = settings.whatsapp || DEFAULT_WHATSAPP_NUMBER;
+  const ADDRESS = settings.company_address || DEFAULT_ADDRESS;
+  const PHONE1 = settings.company_phone || DEFAULT_PHONE1;
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");

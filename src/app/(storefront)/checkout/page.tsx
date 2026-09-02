@@ -4,14 +4,17 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCartStore, cartTotals } from "@/lib/cart-store";
 import { apiFetch, ApiError } from "@/lib/api-client";
+import { useSettings } from "@/lib/settings-context";
 import { Input, Textarea, Select } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-const GST_RATE = 18;
-const WHATSAPP_NUMBER = "918856828894";
+const DEFAULT_WHATSAPP_NUMBER = "918856828894";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const settings = useSettings();
+  const GST_RATE = settings.gst_percent;
+  const WHATSAPP_NUMBER = settings.whatsapp || DEFAULT_WHATSAPP_NUMBER;
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
   const { subtotal } = cartTotals(items);

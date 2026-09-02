@@ -252,6 +252,12 @@ export default function AdminProductsPage() {
     load();
   }
 
+  async function deleteProduct(p: Product) {
+    if (!window.confirm(`Permanently delete "${p.name}" (${p.sku})? This cannot be undone — its image will also be removed. Use Deactivate instead if you just want to hide it.`)) return;
+    await apiFetch(`/api/admin/products/${p.id}?permanent=true`, { method: "DELETE" });
+    load();
+  }
+
   async function uploadImage(p: Product, file: File) {
     const fd = new FormData();
     fd.set("sku", p.sku);
@@ -539,6 +545,9 @@ export default function AdminProductsPage() {
                       </Button>
                       <Button size="sm" variant="secondary" onClick={() => toggleActive(p)}>
                         {p.active ? "Deactivate" : "Activate"}
+                      </Button>
+                      <Button size="sm" variant="danger" onClick={() => deleteProduct(p)}>
+                        Delete
                       </Button>
                     </div>
                   </td>

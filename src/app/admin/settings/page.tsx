@@ -6,19 +6,20 @@ import { apiFetch, ApiError } from "@/lib/api-client";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
+// Every field here is live on the storefront (Nav, Footer, About, Contact,
+// Checkout, homepage hero) — see src/lib/settings-context.tsx for how pages
+// read these. Removed notify_email/from_email: there's no email-sending
+// backend, enquiries go to the business WhatsApp number above instead.
 const SETTINGS_FIELDS: { key: string; label: string; multiline?: boolean }[] = [
   { key: "whatsapp", label: "WhatsApp Number" },
   { key: "gst_percent", label: "GST %" },
   { key: "low_stock_limit", label: "Low Stock Threshold" },
-  { key: "notify_email", label: "Notification Email" },
-  { key: "from_email", label: "From Email" },
-  { key: "company_name", label: "Company Name" },
   { key: "company_address", label: "Company Address", multiline: true },
   { key: "company_phone", label: "Company Phone" },
-  { key: "hero_title", label: "Hero Title" },
-  { key: "hero_subtitle", label: "Hero Subtitle", multiline: true },
-  { key: "hero_video_url", label: "Hero Video URL (from Media Library)" },
-  { key: "site_background_video_url", label: "Site Background Video URL (from Media Library)" },
+  { key: "hero_title", label: "Hero Title (homepage headline)" },
+  { key: "hero_subtitle", label: "Hero Subtitle (homepage tagline)", multiline: true },
+  { key: "hero_video_url", label: "Hero Video URL (direct link to an .mp4)" },
+  { key: "site_background_video_url", label: "Site Background Video URL (direct link to an .mp4)" },
 ];
 
 export default function AdminSettingsPage() {

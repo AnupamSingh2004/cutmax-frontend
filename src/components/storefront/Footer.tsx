@@ -1,13 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { PublicSettings } from "@/lib/types";
 
-const ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune – 411062";
+const DEFAULT_ADDRESS = "Gat No. 714, Opp. Gupta Weigh Bridge, Kudalwadi, Chikhali, Pune – 411062";
 const EMAIL = "officecutmax@gmail.com";
-const PHONE1 = "+91 88568 28894";
+const DEFAULT_PHONE1 = "+91 88568 28894";
 const PHONE2 = "+91 96991 92248";
 const GSTIN = "27AAPFC6278B1Z9";
 
-export function Footer() {
+export function Footer({ settings }: { settings: PublicSettings }) {
+  const ADDRESS = settings.company_address || DEFAULT_ADDRESS;
+  const PHONE1 = settings.company_phone || DEFAULT_PHONE1;
   return (
     <footer className="bg-navy-950 text-white/60">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-16 sm:grid-cols-2 lg:grid-cols-4">
