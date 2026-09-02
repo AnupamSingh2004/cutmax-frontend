@@ -100,7 +100,10 @@ export default async function HomePage() {
             <div className="absolute -right-6 -top-6 h-full w-full rounded-[4px] border-[1.5px] border-red-600/30" />
             <div className="relative aspect-[4/3] overflow-hidden rounded-[4px]" style={{ boxShadow: "0 30px 60px -20px rgba(0,0,0,0.5)" }}>
               <video className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata">
-                <source src={settings.hero_video_url || "/videos/products-hero.mp4"} type="video/mp4" />
+                <source
+                  src={settings.hero_video_url || "https://464.objects.excloud.dev/public/cutmax-images/videos/products-hero.mp4"}
+                  type="video/mp4"
+                />
               </video>
               <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(4,5,7,.08), rgba(4,5,7,.68))" }} />
             </div>
