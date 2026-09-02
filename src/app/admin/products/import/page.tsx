@@ -73,6 +73,12 @@ export default function BulkImportPage() {
           Columns: sku, name, category, subCategory, brand, description, price, stock, unit, imageUrl, featured.
           Existing SKUs are updated, new SKUs are created.
         </p>
+        <p className="mb-4 rounded-lg bg-orange-50 p-3 text-sm text-orange-800">
+          Newly created products are imported as <strong>Inactive</strong> and won&apos;t appear on the storefront
+          until you upload an image for them below (or add one from the product&apos;s edit page) — this prevents
+          half-finished imports from going live with a placeholder image. Filter the product list by
+          &quot;Inactive&quot; to see what still needs a photo.
+        </p>
         <form onSubmit={submitProducts} className="flex items-center gap-3">
           <input type="file" accept=".xlsx" onChange={(e) => setProductFile(e.target.files?.[0] ?? null)} />
           <Button type="submit" disabled={!productFile || productBusy}>

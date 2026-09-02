@@ -67,7 +67,7 @@ export default function AdminEnquiriesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {data?.enquiries.map((enq) => (
+            {data?.enquiries?.map((enq) => (
               <tr key={enq.id} className="cursor-pointer hover:bg-bg-soft">
                 <td className="px-4 py-2">
                   <Link href={`/admin/enquiries/${enq.id}`} className="font-medium text-navy-900 hover:underline">

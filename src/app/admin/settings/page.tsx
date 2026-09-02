@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { apiFetch, ApiError } from "@/lib/api-client";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -21,13 +22,14 @@ const SETTINGS_FIELDS: { key: string; label: string; multiline?: boolean }[] = [
 ];
 
 export default function AdminSettingsPage() {
+  const router = useRouter();
   const [values, setValues] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "" });
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [passwordBusy, setPasswordBusy] = useState(false);
 
   useEffect(() => {
     apiFetch<{ settings: Record<string, string> }>("/api/admin/settings").then((res) => setValues(res.settings));
@@ -48,13 +50,26 @@ export default function AdminSettingsPage() {
   async function changePassword(e: React.FormEvent) {
     e.preventDefault();
     setPasswordError(null);
-    setPasswordSaved(false);
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError("New password and confirmation do not match.");
+      return;
+    }
+    if (passwordForm.newPassword.length < 10) {
+      setPasswordError("New password must be at least 10 characters.");
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to change your admin password?")) return;
+    if (!window.confirm("This will log you out immediately and you'll need to sign in again with the new password. Continue?")) return;
+
+    setPasswordBusy(true);
     try {
-      await apiFetch("/api/admin/settings/password", { method: "POST", body: passwordForm });
-      setPasswordSaved(true);
-      setPasswordForm({ currentPassword: "", newPassword: "" });
+      await apiFetch("/api/admin/auth/password", { method: "PUT", body: passwordForm });
+      router.replace("/admin/login");
     } catch (err) {
       setPasswordError(err instanceof ApiError ? err.message : "Failed to change password");
+      setPasswordBusy(false);
     }
   }
 
@@ -94,19 +109,35 @@ export default function AdminSettingsPage() {
             label="Current Password"
             type="password"
             required
+            autoComplete="current-password"
             value={passwordForm.currentPassword}
             onChange={(e) => setPasswordForm((f) => ({ ...f, currentPassword: e.target.value }))}
           />
-          <Input
-            label="New Password"
-            type="password"
-            required
-            value={passwordForm.newPassword}
-            onChange={(e) => setPasswordForm((f) => ({ ...f, newPassword: e.target.value }))}
-          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input
+              label="New Password"
+              type="password"
+              required
+              minLength={10}
+              autoComplete="new-password"
+              value={passwordForm.newPassword}
+              onChange={(e) => setPasswordForm((f) => ({ ...f, newPassword: e.target.value }))}
+            />
+            <Input
+              label="Retype New Password"
+              type="password"
+              required
+              minLength={10}
+              autoComplete="new-password"
+              value={passwordForm.confirmPassword}
+              onChange={(e) => setPasswordForm((f) => ({ ...f, confirmPassword: e.target.value }))}
+            />
+          </div>
+          <p className="text-xs text-muted">Must be at least 10 characters.</p>
           {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
-          {passwordSaved && <p className="text-sm text-emerald-700">Password updated.</p>}
-          <Button type="submit">Change Password</Button>
+          <Button type="submit" disabled={passwordBusy}>
+            {passwordBusy ? "Updating…" : "Change Password"}
+          </Button>
         </form>
       </div>
     </div>

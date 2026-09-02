@@ -45,8 +45,13 @@ export function useAdminSession() {
   const [admin, setAdmin] = useState<Admin | null | undefined>(undefined); // undefined = not yet checked
   const [loading, setLoading] = useState(true);
 
+  // Only the very first check should show a full-page loading state. The
+  // admin layout re-validates the session on every route change (to pick up
+  // a cookie set by a just-completed login), and re-showing a full loading
+  // screen for that would blank out the sidebar and page on every click,
+  // looking like a hard page reload. Subsequent checks update `admin`
+  // silently in the background instead.
   const refresh = async () => {
-    setLoading(true);
     try {
       const res = await apiFetch<{ admin: Admin }>("/api/admin/auth/me");
       setAdmin(res.admin);

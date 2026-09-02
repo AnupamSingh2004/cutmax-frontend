@@ -49,7 +49,7 @@ export default function AdminAuditLogPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {data?.logs.map((log) => (
+            {data?.logs?.map((log) => (
               <tr key={log.id}>
                 <td className="px-4 py-2 font-medium text-navy-900">{log.action}</td>
                 <td className="px-4 py-2 text-muted">{log.detail ?? "-"}</td>

@@ -472,7 +472,7 @@ export default function AdminProductsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {data?.products.map((p) => {
+            {data?.products?.map((p) => {
               const edit = editValue(p);
               const dirty = edit.price !== String(p.price) || edit.stock !== String(p.stock) || edit.material !== (p.material ?? "");
               return (

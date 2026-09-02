@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAdminSession } from "@/lib/session";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { CutmaxPageLoader } from "@/components/ui/CutmaxLoader";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -29,7 +30,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (isLoginPage) return <>{children}</>;
 
   if (loading || !admin) {
-    return <div className="flex min-h-screen items-center justify-center text-muted">Loading…</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <CutmaxPageLoader />
+      </div>
+    );
   }
 
   return (

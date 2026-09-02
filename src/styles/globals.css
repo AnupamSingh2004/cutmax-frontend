@@ -105,6 +105,14 @@ body {
 }
 
 /* Single soft pulsing ring, top-right of the hero — matches the legacy site's .hero:after */
+/* Branded loading spinner — see CutmaxLoader */
+@keyframes cutmaxSpin {
+  to { transform: rotate(360deg); }
+}
+.cutmax-loader-ring {
+  animation: cutmaxSpin 0.9s linear infinite;
+}
+
 @keyframes heroPulse {
   50% { transform: scale(1.04); opacity: 0.7; }
 }
