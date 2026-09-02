@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { apiFetch, ApiError, uploadsUrl } from "@/lib/api-client";
@@ -215,6 +214,23 @@ export default function AdminProductsPage() {
   const [materialFilter, setMaterialFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  function toggleSelected(id: string) {
+    setSelected((s) => {
+      const next = new Set(s);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    const ids = data?.products?.map((p) => p.id) ?? [];
+    setSelected((s) => (ids.every((id) => s.has(id)) && ids.length > 0 ? new Set() : new Set(ids)));
+  }
+
   const load = useCallback(() => {
     const params = new URLSearchParams({ page: String(page), per_page: "50", active: statusFilter });
     if (q) params.set("q", q);
@@ -224,6 +240,7 @@ export default function AdminProductsPage() {
   }, [page, q, categoryFilter, materialFilter, statusFilter]);
 
   useEffect(load, [load]);
+  useEffect(() => setSelected(new Set()), [page, q, categoryFilter, materialFilter, statusFilter]);
 
   function editValue(p: Product) {
     return edits[p.id] ?? { price: String(p.price), stock: String(p.stock), material: p.material ?? "" };
@@ -248,14 +265,35 @@ export default function AdminProductsPage() {
   }
 
   async function toggleActive(p: Product) {
-    await apiFetch(`/api/admin/products/${p.id}`, { method: p.active ? "DELETE" : "PUT", body: p.active ? undefined : { active: true } });
-    load();
+    try {
+      await apiFetch(`/api/admin/products/${p.id}`, { method: p.active ? "DELETE" : "PUT", body: p.active ? undefined : { active: true } });
+      load();
+    } catch (err) {
+      window.alert(err instanceof ApiError ? err.message : "Failed to update product");
+    }
   }
 
   async function deleteProduct(p: Product) {
     if (!window.confirm(`Permanently delete "${p.name}" (${p.sku})? This cannot be undone — its image will also be removed. Use Deactivate instead if you just want to hide it.`)) return;
     await apiFetch(`/api/admin/products/${p.id}?permanent=true`, { method: "DELETE" });
     load();
+  }
+
+  async function deleteSelected() {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    if (!window.confirm(`Permanently delete ${ids.length} selected product${ids.length > 1 ? "s" : ""}? This cannot be undone — their images will also be removed.`)) return;
+    if (!window.confirm("This is your last chance to back out. Delete them now?")) return;
+    setBulkDeleting(true);
+    try {
+      await apiFetch<{ deleted: number; requested: number }>("/api/admin/products/bulk-delete", { method: "POST", body: { ids } });
+      setSelected(new Set());
+      load();
+    } catch (err) {
+      window.alert(err instanceof ApiError ? err.message : "Failed to delete selected products");
+    } finally {
+      setBulkDeleting(false);
+    }
   }
 
   async function uploadImage(p: Product, file: File) {
@@ -413,10 +451,15 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="flex h-full flex-col gap-6">
+      <div className="flex shrink-0 items-center justify-between">
         <h1 className="text-2xl font-bold text-navy-900">Products</h1>
         <div className="flex gap-3">
+          {selected.size > 0 && (
+            <Button variant="danger" disabled={bulkDeleting} onClick={deleteSelected}>
+              {bulkDeleting ? "Deleting…" : `Delete Selected (${selected.size})`}
+            </Button>
+          )}
           <Link href="/admin/products/import">
             <Button variant="secondary">Bulk Import</Button>
           </Link>
@@ -424,7 +467,7 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex shrink-0 flex-wrap gap-3">
         <div className="min-w-[200px] flex-1">
           <Input
             placeholder="Search by name or SKU…"
@@ -463,10 +506,18 @@ export default function AdminProductsPage() {
         </select>
       </div>
 
-      <div className="overflow-x-auto rounded-card-lg border border-border bg-white shadow-card">
-        <table className="w-full min-w-[900px] text-sm">
-          <thead className="bg-bg-soft text-left text-xs uppercase tracking-wide text-muted">
+      <div className="min-h-0 flex-1 overflow-auto rounded-card-lg border border-border bg-white shadow-card">
+        <table className="w-full min-w-[960px] text-sm">
+          <thead className="sticky top-0 z-10 bg-bg-soft text-left text-xs uppercase tracking-wide text-muted">
             <tr>
+              <th className="px-4 py-3">
+                <input
+                  type="checkbox"
+                  checked={(data?.products?.length ?? 0) > 0 && data!.products.every((p) => selected.has(p.id))}
+                  onChange={toggleSelectAll}
+                  aria-label="Select all products on this page"
+                />
+              </th>
               <th className="px-4 py-3">Image</th>
               <th className="px-4 py-3">SKU / Name</th>
               <th className="px-4 py-3">Category</th>
@@ -482,11 +533,20 @@ export default function AdminProductsPage() {
               const edit = editValue(p);
               const dirty = edit.price !== String(p.price) || edit.stock !== String(p.stock) || edit.material !== (p.material ?? "");
               return (
-                <tr key={p.id}>
+                <tr key={p.id} className={selected.has(p.id) ? "bg-red-600/5" : ""}>
+                  <td className="px-4 py-2">
+                    <input type="checkbox" checked={selected.has(p.id)} onChange={() => toggleSelected(p.id)} aria-label={`Select ${p.sku}`} />
+                  </td>
                   <td className="px-4 py-2">
                     <label className="relative block h-12 w-12 cursor-pointer overflow-hidden rounded-lg border border-border bg-bg-soft">
                       {p.imageUrl && (
-                        <Image src={uploadsUrl(p.imageUrl)} alt={p.name} fill sizes="48px" className="object-cover" />
+                        // Plain <img>, not next/image: these are tiny 48px admin
+                        // thumbnails served straight from excloud, and next/image's
+                        // optimizer needs that host allow-listed at build time via
+                        // NEXT_PUBLIC_R2_PUBLIC_BASE_URL, which silently 400s them
+                        // (blank squares) if unset.
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={uploadsUrl(p.imageUrl)} alt={p.name} className="absolute inset-0 h-full w-full object-cover" />
                       )}
                       <input
                         type="file"
@@ -559,7 +619,7 @@ export default function AdminProductsPage() {
       </div>
 
       {data && (
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex shrink-0 items-center justify-center gap-3">
           <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
             Previous
           </Button>
@@ -607,7 +667,8 @@ export default function AdminProductsPage() {
             <label className="mb-1.5 block text-sm font-medium text-navy-900">Replace product image</label>
             {editProduct?.imageUrl && (
               <div className="relative mb-2 h-16 w-16 overflow-hidden rounded-lg border border-border bg-bg-soft">
-                <Image src={uploadsUrl(editProduct.imageUrl)} alt={editProduct.name} fill sizes="64px" className="object-cover" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={uploadsUrl(editProduct.imageUrl)} alt={editProduct.name} className="absolute inset-0 h-full w-full object-cover" />
               </div>
             )}
             <input

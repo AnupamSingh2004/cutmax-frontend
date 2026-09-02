@@ -14,6 +14,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  Legend,
 } from "recharts";
 import { apiFetch } from "@/lib/api-client";
 import { KpiCard } from "@/components/admin/KpiCard";
@@ -35,7 +36,11 @@ interface StatsResponse {
   topProducts: { sku: string; name: string; enquiryCount: number; totalQty: number }[];
 }
 
-const PIE_COLORS = ["#0c2050", "#e8e2d6", "#68717b"];
+const STOCK_STATUS_COLORS: Record<string, string> = {
+  "In Stock": "#227a4b",
+  "Low Stock": "#c97a0e",
+  "Out of Stock": "#c71b20",
+};
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
@@ -91,16 +96,30 @@ export default function AdminDashboardPage() {
 
         <div className="rounded-card-lg border border-border bg-white p-5 shadow-card">
           <h2 className="mb-4 text-sm font-semibold text-navy-900">Stock Status</h2>
-          <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie data={stats.stockStatus} dataKey="count" nameKey="status" innerRadius={50} outerRadius={80}>
-                {stats.stockStatus.map((entry, i) => (
-                  <Cell key={entry.status} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          {stats.stockStatus.length === 0 ? (
+            <div className="flex h-[240px] items-center justify-center text-sm text-muted">No active products yet.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={240}>
+              <PieChart>
+                <Pie
+                  data={stats.stockStatus}
+                  dataKey="count"
+                  nameKey="status"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  labelLine={false}
+                >
+                  {stats.stockStatus.map((entry) => (
+                    <Cell key={entry.status} fill={STOCK_STATUS_COLORS[entry.status] ?? "#68717b"} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value, _name, item) => [`${value} products`, item.payload.status]} />
+                <Legend verticalAlign="bottom" height={24} />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         <div className="rounded-card-lg border border-border bg-white p-5 shadow-card">

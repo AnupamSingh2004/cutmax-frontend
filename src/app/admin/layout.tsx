@@ -38,9 +38,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex min-h-screen bg-bg-soft">
+    <div className="flex h-screen overflow-hidden bg-bg-soft">
       <AdminSidebar admin={admin} onLogout={() => { void refresh(); router.replace("/admin/login"); }} />
-      <main className="flex-1 overflow-x-auto p-8">{children}</main>
+      <main className="flex-1 overflow-y-auto overflow-x-auto p-8">{children}</main>
     </div>
   );
 }
