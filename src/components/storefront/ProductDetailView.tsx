@@ -119,31 +119,31 @@ export function ProductDetailView({ product, priceBreaks, related }: { product: 
               </div>
             </div>
           )}
-        </div>
-      </div>
 
-      <div className="mt-12">
-        <h2 className="mb-3 text-lg font-bold text-heading">Specifications</h2>
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <tbody className="divide-y divide-border">
-              {[
-                { label: "Part Number / SKU", value: product.sku },
-                { label: "Category", value: product.category },
-                { label: "Sub-Category", value: product.subCategory },
-                { label: "Brand", value: product.brand },
-                ...(product.material ? [{ label: "Material", value: product.material }] : []),
-                { label: "Unit", value: product.unit },
-                { label: "Stock", value: `${product.stock} ${product.unit}` },
-                ...(product.specifications ?? []),
-              ].map((row) => (
-                <tr key={row.label}>
-                  <td className="w-1/3 bg-bg-soft px-4 py-2.5 font-semibold text-heading">{row.label}</td>
-                  <td className="px-4 py-2.5 text-muted-soft">{row.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="mt-8">
+            <h2 className="mb-3 text-lg font-bold text-heading">Specifications</h2>
+            <div className="overflow-hidden rounded-lg border border-border">
+              <table className="w-full text-sm">
+                <tbody className="divide-y divide-border">
+                  {[
+                    { label: "Part Number / SKU", value: product.sku },
+                    { label: "Category", value: product.category },
+                    { label: "Sub-Category", value: product.subCategory },
+                    { label: "Brand", value: product.brand },
+                    ...(product.material ? [{ label: "Material", value: product.material }] : []),
+                    { label: "Unit", value: product.unit },
+                    { label: "Stock", value: `${product.stock} ${product.unit}` },
+                    ...(product.specifications ?? []),
+                  ].map((row) => (
+                    <tr key={row.label}>
+                      <td className="w-1/3 bg-bg-soft px-4 py-2.5 font-semibold text-heading">{row.label}</td>
+                      <td className="px-4 py-2.5 text-muted-soft">{row.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
