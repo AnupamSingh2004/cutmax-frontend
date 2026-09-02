@@ -68,7 +68,7 @@ export default function AdminEnquiryDetailPage({ params }: { params: Promise<{ i
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {enquiry.items.map((item, i) => (
+            {enquiry.items?.map((item, i) => (
               <tr key={i}>
                 <td className="py-2">{item.sku}</td>
                 <td className="py-2">{item.name}</td>
