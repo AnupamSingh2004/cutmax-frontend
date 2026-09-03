@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Drawer";
 import { Badge } from "@/components/ui/Badge";
+import { Pagination } from "@/components/ui/Pagination";
 
 interface ProductsResponse {
   products: Product[];
@@ -742,21 +743,8 @@ export default function AdminProductsPage() {
       </div>
 
       {data && (
-        <div className="flex shrink-0 items-center justify-center gap-3">
-          <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-            Previous
-          </Button>
-          <span className="text-sm text-muted">
-            Page {data.page} of {Math.max(1, Math.ceil(data.total / data.per_page))}
-          </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            disabled={page >= Math.ceil(data.total / data.per_page)}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </Button>
+        <div className="shrink-0 -mt-4">
+          <Pagination page={page} totalPages={Math.max(1, Math.ceil(data.total / data.per_page))} onChange={setPage} />
         </div>
       )}
 
