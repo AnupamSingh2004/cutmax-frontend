@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import type { Product, PriceBreak } from "@/lib/types";
 import { productImageSrc } from "@/lib/product-image";
 import { Button } from "@/components/ui/Button";
@@ -21,6 +21,14 @@ export function ProductDetailView({ product, priceBreaks, related }: { product: 
   const [imgSrc, setImgSrc] = useState(productImageSrc(product));
   const onImgError = useCallback(() => { setImgSrc(DEFAULT_PLACEHOLDER_IMAGE); }, []);
   const whatsappMessage = encodeURIComponent(`Hi, I'm interested in ${product.name} (SKU: ${product.sku}). Please share CAD/STEP files and pricing.`);
+
+  // Navigating here from a scrolled-down position on the products list (or
+  // another product page) otherwise lands mid-page instead of at the top --
+  // the loading.tsx fallback is short enough that the browser doesn't treat
+  // this as a fresh page for scroll-restoration purposes.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [product.sku]);
 
   const sortedBreaks = useMemo(() => [...priceBreaks].sort((a, b) => a.minQty - b.minQty), [priceBreaks]);
   const unitPrice = useMemo(() => {

@@ -18,8 +18,11 @@ export function CutmaxLoader({ label, className = "" }: { label?: string; classN
 }
 
 export function CutmaxPageLoader({ label = "Loading…" }: { label?: string }) {
+  // Full viewport height, not just a chunk of it -- used as a route-level
+  // loading.tsx fallback with nothing else on the page, so anything shorter
+  // lets the layout's Footer show up right underneath the spinner.
   return (
-    <div className="flex min-h-[50vh] w-full items-center justify-center">
+    <div className="flex min-h-screen w-full items-center justify-center">
       <CutmaxLoader label={label} />
     </div>
   );

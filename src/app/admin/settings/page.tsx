@@ -10,10 +10,14 @@ import { Button } from "@/components/ui/Button";
 // Checkout, homepage hero) — see src/lib/settings-context.tsx for how pages
 // read these. Removed notify_email/from_email: there's no email-sending
 // backend, enquiries go to the business WhatsApp number above instead.
-const SETTINGS_FIELDS: { key: string; label: string; multiline?: boolean }[] = [
+const SETTINGS_FIELDS: { key: string; label: string; multiline?: boolean; hint?: string }[] = [
   { key: "whatsapp", label: "WhatsApp Number" },
   { key: "gst_percent", label: "GST %" },
-  { key: "low_stock_limit", label: "Low Stock Threshold" },
+  {
+    key: "low_stock_limit",
+    label: "Low Stock Threshold",
+    hint: "A product shows a \"Low Stock\" badge once its stock count is at or below this number (and 0 always shows \"Out of Stock\"). E.g. set to 10 and any product with 10 units or fewer left is flagged.",
+  },
   { key: "company_address", label: "Company Address", multiline: true },
   { key: "company_phone", label: "Company Phone" },
   { key: "hero_title", label: "Hero Title (homepage headline)" },
@@ -79,23 +83,24 @@ export default function AdminSettingsPage() {
       <div>
         <h1 className="mb-6 text-2xl font-bold text-navy-900">Settings</h1>
         <form onSubmit={save} className="flex flex-col gap-4 rounded-card-lg border border-border bg-white p-6 shadow-card">
-          {SETTINGS_FIELDS.map((field) =>
-            field.multiline ? (
-              <Textarea
-                key={field.key}
-                label={field.label}
-                value={values[field.key] ?? ""}
-                onChange={(e) => setValues((v) => ({ ...v, [field.key]: e.target.value }))}
-              />
-            ) : (
-              <Input
-                key={field.key}
-                label={field.label}
-                value={values[field.key] ?? ""}
-                onChange={(e) => setValues((v) => ({ ...v, [field.key]: e.target.value }))}
-              />
-            ),
-          )}
+          {SETTINGS_FIELDS.map((field) => (
+            <div key={field.key} className="flex flex-col gap-1">
+              {field.multiline ? (
+                <Textarea
+                  label={field.label}
+                  value={values[field.key] ?? ""}
+                  onChange={(e) => setValues((v) => ({ ...v, [field.key]: e.target.value }))}
+                />
+              ) : (
+                <Input
+                  label={field.label}
+                  value={values[field.key] ?? ""}
+                  onChange={(e) => setValues((v) => ({ ...v, [field.key]: e.target.value }))}
+                />
+              )}
+              {field.hint && <p className="text-xs text-muted">{field.hint}</p>}
+            </div>
+          ))}
           {saved && <p className="text-sm text-emerald-700">Settings saved.</p>}
           <Button type="submit" disabled={saving}>
             {saving ? "Saving…" : "Save Settings"}
