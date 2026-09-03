@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { API_BASE, apiFetch } from "@/lib/api-client";
+import { API_BASE, apiFetch, ApiError } from "@/lib/api-client";
 import type { Enquiry, EnquiryStatus } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { Select } from "@/components/ui/Input";
@@ -27,8 +27,14 @@ export default function AdminEnquiryDetailPage({ params }: { params: Promise<{ i
   useEffect(load, [id]);
 
   async function updateStatus(status: EnquiryStatus) {
-    await apiFetch(`/api/admin/enquiries/${id}`, { method: "PUT", body: { status } });
-    load();
+    const previous = enquiry;
+    setEnquiry((e) => (e ? { ...e, status } : e));
+    try {
+      await apiFetch(`/api/admin/enquiries/${id}`, { method: "PUT", body: { status } });
+    } catch (err) {
+      setEnquiry(previous);
+      window.alert(err instanceof ApiError ? err.message : "Failed to update status");
+    }
   }
 
   if (!enquiry) return <p className="text-muted">Loading…</p>;
