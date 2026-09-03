@@ -22,6 +22,7 @@ import { KpiCard } from "@/components/admin/KpiCard";
 interface StatsResponse {
   kpis: {
     totalProducts: number;
+    activeProducts: number;
     stockUnits: number;
     stockValue: number;
     totalEnquiries: number;
@@ -59,6 +60,7 @@ export default function AdminDashboardPage() {
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <KpiCard label="Total Products" value={String(kpis.totalProducts)} />
+        <KpiCard label="Active Products" value={String(kpis.activeProducts)} />
         <KpiCard label="Stock Units" value={kpis.stockUnits.toLocaleString("en-IN")} />
         <KpiCard label="Stock Value" value={`₹${kpis.stockValue.toLocaleString("en-IN")}`} />
         <KpiCard label="Total Enquiries" value={String(kpis.totalEnquiries)} />
