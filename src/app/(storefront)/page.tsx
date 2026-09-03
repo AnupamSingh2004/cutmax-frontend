@@ -5,6 +5,7 @@ import { API_BASE } from "@/lib/api-client";
 import { productImageSrc } from "@/lib/product-image";
 import type { Product, PublicSettings } from "@/lib/types";
 import { PageHeading } from "@/components/ui/PageHeading";
+import { StockStatusPill } from "@/components/storefront/StockStatusPill";
 
 const DEFAULT_WHATSAPP_NUMBER = "918856828894";
 const DEFAULT_HERO_TITLE = "Precision cutting tools, sourced without friction.";
@@ -172,7 +173,6 @@ export default async function HomePage() {
             <h2 className="font-display mb-12 text-[1.75rem] font-bold text-heading sm:text-[2.375rem]">Featured from the catalogue</h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {featured.map((p) => {
-                const low = p.stock <= settings.low_stock;
                 return (
                   <Link key={p.sku} href={`/products/${p.sku}`} className="block overflow-hidden rounded-[4px] bg-surface transition-transform hover:-translate-y-1">
                     <div className="relative aspect-square bg-bg-soft">
@@ -180,10 +180,7 @@ export default async function HomePage() {
                       <div className="absolute left-3 top-3 rounded-[3px] bg-navy-900 px-2.5 py-1 text-[10.5px] font-bold tracking-wide text-white">
                         {p.brand}
                       </div>
-                      <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-[3px] bg-white/92 px-2.5 py-1 text-[10.5px] font-bold" style={{ color: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }}>
-                        <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }} />
-                        {low ? "LOW STOCK" : "IN STOCK"}
-                      </div>
+                      <StockStatusPill stock={p.stock} threshold={p.lowStockThreshold ?? settings.low_stock} dense />
                     </div>
                     <div className="p-5">
                       <div className="mb-1.5 text-[11px] font-bold tracking-wide text-red-600">{p.subCategory}</div>

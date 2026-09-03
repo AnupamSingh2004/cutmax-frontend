@@ -16,6 +16,7 @@ export interface Product {
   sortOrder: number;
   material: string | null;
   specifications: { label: string; value: string }[] | null;
+  lowStockThreshold: number | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -49,7 +49,7 @@ export function ProductDetailView({ product, priceBreaks, related }: { product: 
         <div>
           <div className="mb-2 flex items-center gap-2 text-xs text-muted">
             <span className="rounded-full bg-navy-900 px-2 py-0.5 font-semibold text-white">{product.brand}</span>
-            {stockBadge(product.stock, 10)}
+            {stockBadge(product.stock, product.lowStockThreshold ?? settings.low_stock)}
           </div>
           <h1 className="text-2xl font-bold text-heading">{product.name}</h1>
           <p className="mt-1 text-sm text-muted">
@@ -160,7 +160,7 @@ export function ProductDetailView({ product, priceBreaks, related }: { product: 
           <h2 className="mb-6 text-xl font-bold text-heading">Related Products</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} lowStockLimit={10} />
+              <ProductCard key={p.id} product={p} lowStockLimit={settings.low_stock} />
             ))}
           </div>
         </section>

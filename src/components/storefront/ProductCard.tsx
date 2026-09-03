@@ -7,6 +7,7 @@ import type { Product } from "@/lib/types";
 import { productImageSrc } from "@/lib/product-image";
 import { useCartStore } from "@/lib/cart-store";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/lib/taxonomy";
+import { StockStatusPill } from "./StockStatusPill";
 
 export function ProductCard({ product, lowStockLimit }: { product: Product; lowStockLimit: number }) {
   const items = useCartStore((s) => s.items);
@@ -18,7 +19,7 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
 
   const inCart = items.find((i) => i.sku === product.sku);
   const qty = inCart?.qty ?? 0;
-  const low = product.stock > 0 && product.stock <= lowStockLimit;
+  const threshold = product.lowStockThreshold ?? lowStockLimit;
   const outOfStock = product.stock <= 0;
 
   function clamp(n: number) {
@@ -36,15 +37,7 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
       <Link href={`/products/${product.sku}`} className="relative block aspect-square shrink-0 bg-bg-soft">
         <Image src={imgSrc} alt={product.name} fill sizes="(max-width: 640px) 50vw, 320px" className="object-contain p-6" onError={onImgError} />
         <div className="absolute left-3 top-3 rounded-[3px] bg-navy-900 px-3 py-1.5 text-[11px] font-bold tracking-wide text-white">{product.brand}</div>
-        {!outOfStock && (
-          <div
-            className="absolute right-3 top-3 flex items-center gap-1.5 rounded-[3px] bg-white/92 px-3 py-1.5 text-[11px] font-bold"
-            style={{ color: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }}
-          >
-            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: low ? "var(--color-orange-600)" : "var(--color-stock-in)" }} />
-            {low ? "LOW STOCK" : "IN STOCK"}
-          </div>
-        )}
+        <StockStatusPill stock={product.stock} threshold={threshold} />
       </Link>
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 truncate text-[11.5px] font-bold tracking-wide text-red-600">{product.subCategory}</div>

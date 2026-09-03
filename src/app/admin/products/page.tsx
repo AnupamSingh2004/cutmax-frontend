@@ -41,6 +41,7 @@ const EMPTY_FORM = {
   stock: "0",
   unit: "NOS",
   material: "",
+  lowStockThreshold: "",
 };
 
 type FormState = typeof EMPTY_FORM;
@@ -198,6 +199,14 @@ function ProductFormFields({ form, setForm }: { form: FormState; setForm: React.
         </Select>
       </div>
       <Input label="Description" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+      <Input
+        label="Low Stock Threshold (optional)"
+        type="number"
+        min={0}
+        placeholder="Uses the site-wide default if left blank"
+        value={form.lowStockThreshold}
+        onChange={(e) => setForm((f) => ({ ...f, lowStockThreshold: e.target.value }))}
+      />
     </>
   );
 }
@@ -233,6 +242,8 @@ export default function AdminProductsPage() {
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [bulkActivating, setBulkActivating] = useState(false);
+  const [selectingAllMatching, setSelectingAllMatching] = useState(false);
 
   function toggleSelected(id: string) {
     setSelected((s) => {
@@ -246,6 +257,24 @@ export default function AdminProductsPage() {
   function toggleSelectAll() {
     const ids = data?.products?.map((p) => p.id) ?? [];
     setSelected((s) => (ids.every((id) => s.has(id)) && ids.length > 0 ? new Set() : new Set(ids)));
+  }
+
+  // Selects every product matching the current search/filters, not just the
+  // ones on this page -- for bulk-activating or bulk-deleting a whole
+  // imported batch (e.g. everything from one stock sheet) at once.
+  async function selectAllMatching() {
+    if (!data) return;
+    setSelectingAllMatching(true);
+    try {
+      const params = new URLSearchParams({ page: "1", per_page: String(data.total), active: statusFilter });
+      if (q) params.set("q", q);
+      if (categoryFilter) params.set("category", categoryFilter);
+      if (materialFilter) params.set("material", materialFilter);
+      const res = await apiFetch<ProductsResponse>(`/api/admin/products?${params.toString()}`);
+      setSelected(new Set(res.products.map((p) => p.id)));
+    } finally {
+      setSelectingAllMatching(false);
+    }
   }
 
   const load = useCallback(() => {
@@ -296,6 +325,31 @@ export default function AdminProductsPage() {
     load();
   }
 
+  async function activateSelected() {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    if (!window.confirm(`Activate ${ids.length} selected product${ids.length > 1 ? "s" : ""}? Any without a price and an image will be skipped.`)) return;
+    setBulkActivating(true);
+    try {
+      const res = await apiFetch<{ activated: number; skipped: { sku: string; reason: string }[] }>(
+        "/api/admin/products/bulk-activate",
+        { method: "POST", body: { ids } },
+      );
+      setSelected(new Set());
+      load();
+      if (res.skipped.length > 0) {
+        window.alert(
+          `Activated ${res.activated}. Skipped ${res.skipped.length}:\n` +
+            res.skipped.map((s) => `${s.sku}: ${s.reason}`).join("\n"),
+        );
+      }
+    } catch (err) {
+      window.alert(err instanceof ApiError ? err.message : "Failed to activate selected products");
+    } finally {
+      setBulkActivating(false);
+    }
+  }
+
   async function deleteSelected() {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
@@ -318,6 +372,15 @@ export default function AdminProductsPage() {
     fd.set("sku", p.sku);
     fd.set("image", file);
     await apiFetch(`/api/admin/uploads`, { method: "POST", body: fd });
+    load();
+  }
+
+  async function removeEditProductImage() {
+    if (!editProduct) return;
+    if (!window.confirm("Remove this product's image? It will also deactivate the product until a new image is uploaded.")) return;
+    await apiFetch(`/api/admin/products/${editProduct.id}`, { method: "PUT", body: { removeImage: true } });
+    setEditProduct((p) => (p ? { ...p, imageUrl: null } : p));
+    setEditImage(null);
     load();
   }
 
@@ -367,14 +430,25 @@ export default function AdminProductsPage() {
     try {
       const res = await apiFetch<{ product: { id: string; sku: string } }>("/api/admin/products", {
         method: "POST",
-        body: { ...form, price, stock, specifications: validSpecs(formSpecs) },
+        body: {
+          ...form,
+          price,
+          stock,
+          specifications: validSpecs(formSpecs),
+          lowStockThreshold: form.lowStockThreshold.trim() === "" ? null : Number(form.lowStockThreshold),
+        },
       });
 
+      // New products always start Inactive (see backend) so a half-finished
+      // one can't go live with no photo. If a photo was provided right here,
+      // there's nothing left blocking it, so activate it immediately instead
+      // of making the admin do a separate Activate click for no reason.
       if (formImage) {
         const fd = new FormData();
         fd.set("sku", res.product.sku);
         fd.set("image", formImage);
         await apiFetch(`/api/admin/uploads`, { method: "POST", body: fd });
+        await apiFetch(`/api/admin/products/${res.product.id}`, { method: "PUT", body: { active: true } });
       }
 
       const breaks = validBreaks(formBreaks);
@@ -410,6 +484,7 @@ export default function AdminProductsPage() {
       stock: String(p.stock),
       unit: p.unit,
       material: p.material ?? "",
+      lowStockThreshold: p.lowStockThreshold != null ? String(p.lowStockThreshold) : "",
     });
     setEditSpecs([]);
     setEditBreaks(defaultBreakRows());
@@ -446,7 +521,13 @@ export default function AdminProductsPage() {
     try {
       await apiFetch(`/api/admin/products/${editProduct.id}`, {
         method: "PUT",
-        body: { ...editForm, price, stock, specifications: validSpecs(editSpecs) },
+        body: {
+          ...editForm,
+          price,
+          stock,
+          specifications: validSpecs(editSpecs),
+          lowStockThreshold: editForm.lowStockThreshold.trim() === "" ? null : Number(editForm.lowStockThreshold),
+        },
       });
 
       if (editImage) {
@@ -473,9 +554,14 @@ export default function AdminProductsPage() {
         <h1 className="text-2xl font-bold text-navy-900">Products</h1>
         <div className="flex gap-3">
           {selected.size > 0 && (
-            <Button variant="danger" disabled={bulkDeleting} onClick={deleteSelected}>
-              {bulkDeleting ? "Deleting…" : `Delete Selected (${selected.size})`}
-            </Button>
+            <>
+              <Button variant="secondary" disabled={bulkActivating} onClick={activateSelected}>
+                {bulkActivating ? "Activating…" : `Activate Selected (${selected.size})`}
+              </Button>
+              <Button variant="danger" disabled={bulkDeleting} onClick={deleteSelected}>
+                {bulkDeleting ? "Deleting…" : `Delete Selected (${selected.size})`}
+              </Button>
+            </>
           )}
           <Link href="/admin/products/import">
             <Button variant="secondary">Bulk Import</Button>
@@ -522,6 +608,26 @@ export default function AdminProductsPage() {
           <option value="false">Inactive</option>
         </select>
       </div>
+
+      {data && data.products.length > 0 && data.products.every((p) => selected.has(p.id)) && data.total > data.products.length && (
+        <div className="-mt-2 flex shrink-0 items-center gap-2 rounded-lg bg-bg-soft px-4 py-2 text-sm text-muted">
+          {selected.size === data.total ? (
+            <span>All {data.total} products matching the current filters are selected.</span>
+          ) : (
+            <>
+              <span>All {data.products.length} products on this page are selected.</span>
+              <button
+                type="button"
+                className="font-semibold text-navy-900 underline disabled:opacity-50"
+                disabled={selectingAllMatching}
+                onClick={selectAllMatching}
+              >
+                {selectingAllMatching ? "Selecting…" : `Select all ${data.total} matching filters`}
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="min-h-0 flex-1 overflow-auto rounded-card-lg border border-border bg-white shadow-card">
         <table className="w-full min-w-[960px] text-sm">
@@ -689,13 +795,20 @@ export default function AdminProductsPage() {
           <div>
             <label className="mb-1.5 block text-sm font-medium text-navy-900">Replace product image</label>
             {(editImagePreview || editProduct?.imageUrl) && (
-              <div className="relative mb-2 h-16 w-16 overflow-hidden rounded-lg border border-border bg-bg-soft">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={editImagePreview ?? uploadsUrl(editProduct!.imageUrl!)}
-                  alt={editProduct?.name}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+              <div className="mb-2 flex items-center gap-3">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border bg-bg-soft">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={editImagePreview ?? uploadsUrl(editProduct!.imageUrl!)}
+                    alt={editProduct?.name}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </div>
+                {!editImagePreview && editProduct?.imageUrl && (
+                  <Button type="button" size="sm" variant="danger" onClick={removeEditProductImage}>
+                    Remove Image
+                  </Button>
+                )}
               </div>
             )}
             {editImagePreview && <p className="mb-2 text-xs text-muted">New image selected — click Save Changes below to upload it.</p>}
