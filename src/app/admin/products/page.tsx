@@ -45,6 +45,21 @@ const EMPTY_FORM = {
 
 type FormState = typeof EMPTY_FORM;
 
+/** Live preview URL for a just-picked (not yet uploaded) file. */
+function useObjectUrl(file: File | null): string | null {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!file) {
+      setUrl(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+  return url;
+}
+
 const MATERIAL_OPTIONS = ["", "Carbide", "HSS"];
 
 type BreakRow = { minQty: string; unitPrice: string };
@@ -197,6 +212,7 @@ export default function AdminProductsPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [formImage, setFormImage] = useState<File | null>(null);
+  const formImagePreview = useObjectUrl(formImage);
   const [formBreaks, setFormBreaks] = useState<BreakRow[]>(defaultBreakRows());
   const [formSpecs, setFormSpecs] = useState<SpecRow[]>([]);
   const [formError, setFormError] = useState<string | null>(null);
@@ -205,6 +221,7 @@ export default function AdminProductsPage() {
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [editForm, setEditForm] = useState<FormState>(EMPTY_FORM);
   const [editImage, setEditImage] = useState<File | null>(null);
+  const editImagePreview = useObjectUrl(editImage);
   const [editBreaks, setEditBreaks] = useState<BreakRow[]>([]);
   const [editSpecs, setEditSpecs] = useState<SpecRow[]>([]);
   const [editError, setEditError] = useState<string | null>(null);
@@ -594,7 +611,7 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-2">{p.active ? <Badge tone="success">Active</Badge> : <Badge tone="danger">Inactive</Badge>}</td>
                   <td className="px-4 py-2">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="grid w-[180px] grid-cols-2 gap-2">
                       {dirty && (
                         <Button size="sm" disabled={savingId === p.id} onClick={() => saveRow(p)}>
                           Save
@@ -643,6 +660,12 @@ export default function AdminProductsPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-navy-900">Product image</label>
+            {formImagePreview && (
+              <div className="relative mb-2 h-16 w-16 overflow-hidden rounded-lg border border-border bg-bg-soft">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={formImagePreview} alt="Selected preview" className="absolute inset-0 h-full w-full object-cover" />
+              </div>
+            )}
             <input
               type="file"
               accept="image/*"
@@ -665,12 +688,17 @@ export default function AdminProductsPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-navy-900">Replace product image</label>
-            {editProduct?.imageUrl && (
+            {(editImagePreview || editProduct?.imageUrl) && (
               <div className="relative mb-2 h-16 w-16 overflow-hidden rounded-lg border border-border bg-bg-soft">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={uploadsUrl(editProduct.imageUrl)} alt={editProduct.name} className="absolute inset-0 h-full w-full object-cover" />
+                <img
+                  src={editImagePreview ?? uploadsUrl(editProduct!.imageUrl!)}
+                  alt={editProduct?.name}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
               </div>
             )}
+            {editImagePreview && <p className="mb-2 text-xs text-muted">New image selected — click Save Changes below to upload it.</p>}
             <input
               type="file"
               accept="image/*"
