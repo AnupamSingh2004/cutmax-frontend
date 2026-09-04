@@ -24,6 +24,7 @@ interface StockImportResult {
   skipped: number;
   createdProducts: { sku: string; name: string }[];
   errors: { row: number; name?: string; error: string }[];
+  warnings: { row: number; name?: string; sku?: string; field: string; value: string; message: string }[];
 }
 
 export default function BulkImportPage() {
@@ -99,16 +100,46 @@ export default function BulkImportPage() {
 
       <section className="rounded-card-lg border border-border bg-white p-6 shadow-card">
         <h2 className="mb-2 font-semibold text-navy-900">Import Stock Sheet (.xlsx)</h2>
-        <p className="mb-4 text-sm text-muted">
-          For real supplier/stock sheets that don&apos;t have a SKU column — just an item name, category, brand and
-          quantity (any of Item/Name, Category, Sub-Category, Brand, Qty/Quantity/Stock, in any order or spelling).
-          Rows are matched to existing products <strong>by name</strong>: a match updates its stock quantity only; a
-          name that doesn&apos;t exist yet creates a new product with an auto-generated SKU.
+        <p className="mb-3 text-sm text-muted">
+          Accepts real supplier/stock sheets as-is — headers can be in any order, any casing, and any of the spelling
+          variants below. Rows are matched to an existing product first by <strong>SKU</strong> (if that column is
+          present and filled in), otherwise <strong>by name</strong>. A match updates only the columns your sheet
+          actually has — a column you leave out of the file is left untouched on existing products. A name/SKU that
+          doesn&apos;t exist yet creates a new product.
+        </p>
+        <div className="mb-3 overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-xs">
+            <thead className="bg-bg-soft text-left">
+              <tr>
+                <th className="px-3 py-2">Field</th>
+                <th className="px-3 py-2">Accepted header names</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr><td className="px-3 py-1.5 font-medium">Name</td><td className="px-3 py-1.5 text-muted">Item, Name, Product, Item Name</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">SKU (optional)</td><td className="px-3 py-1.5 text-muted">SKU, Code, Item Code — auto-generated if omitted</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Category</td><td className="px-3 py-1.5 text-muted">Category, Cotegry, Cat</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Sub-Category</td><td className="px-3 py-1.5 text-muted">Sub-Category, Sub-Cotegry, Subcat</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Brand</td><td className="px-3 py-1.5 text-muted">Brand, Make</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Material (optional)</td><td className="px-3 py-1.5 text-muted">Material, Grade</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Description (optional)</td><td className="px-3 py-1.5 text-muted">Description, Desc</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Price</td><td className="px-3 py-1.5 text-muted">Price, Rate, Unit Price, MRP</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Stock / Qty</td><td className="px-3 py-1.5 text-muted">Qty, Quantity, Stock</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Unit (optional)</td><td className="px-3 py-1.5 text-muted">Unit, UOM — defaults to NOS</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Featured (optional)</td><td className="px-3 py-1.5 text-muted">Featured — TRUE/YES/1</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Sort order (optional)</td><td className="px-3 py-1.5 text-muted">Sort Order, Order, Position</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Low stock threshold (optional)</td><td className="px-3 py-1.5 text-muted">Low Stock Threshold, Low Stock, Reorder Level</td></tr>
+              <tr><td className="px-3 py-1.5 font-medium">Specifications (optional)</td><td className="px-3 py-1.5 text-muted">Specifications, Specs — one cell as &quot;Label: Value | Label2: Value2&quot;</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="mb-4 text-xs text-muted">
+          Not included: product images — those still go through Bulk Image Import below, matched by filename.
         </p>
         <p className="mb-4 rounded-lg bg-orange-50 p-3 text-sm text-orange-800">
-          Newly created products start at price ₹0 and <strong>Inactive</strong> — fill in the price and upload an
-          image (via Bulk Image Import below, or the product&apos;s edit page) before they&apos;ll appear on the
-          storefront.
+          Newly created products start <strong>Inactive</strong> (and at ₹0 if no price column) — fill in the price
+          and upload an image (via Bulk Image Import below, or the product&apos;s edit page) before they&apos;ll
+          appear on the storefront.
         </p>
         <form onSubmit={submitStock} className="flex items-center gap-3">
           <input type="file" accept=".xlsx" onChange={(e) => setStockFile(e.target.files?.[0] ?? null)} />
@@ -129,6 +160,16 @@ export default function BulkImportPage() {
                 {stockResult.createdProducts.map((p) => (
                   <p key={p.sku}>
                     {p.sku} — {p.name}
+                  </p>
+                ))}
+              </div>
+            )}
+            {stockResult.warnings.length > 0 && (
+              <div className="mt-2 max-h-48 overflow-y-auto rounded-lg bg-orange-50 p-3 text-xs text-orange-800">
+                <p className="mb-1 font-semibold">Imported, but worth double-checking:</p>
+                {stockResult.warnings.map((wobj, i) => (
+                  <p key={i}>
+                    Row {wobj.row} ({wobj.sku || wobj.name || "?"}): {wobj.message} — got &quot;{wobj.value}&quot;
                   </p>
                 ))}
               </div>
