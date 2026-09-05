@@ -7,6 +7,7 @@ import { productImageSrc } from "@/lib/product-image";
 import { Button } from "@/components/ui/Button";
 import { stockBadge } from "@/components/ui/Badge";
 import { ProductCard } from "@/components/storefront/ProductCard";
+import { HorizontalScroller } from "@/components/ui/HorizontalScroller";
 import { useCartStore } from "@/lib/cart-store";
 import { useSettings } from "@/lib/settings-context";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/lib/taxonomy";
@@ -158,11 +159,13 @@ export function ProductDetailView({ product, priceBreaks, related }: { product: 
       {related.length > 0 && (
         <section className="mt-16">
           <h2 className="mb-6 text-xl font-bold text-heading">Related Products</h2>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <HorizontalScroller>
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} lowStockLimit={settings.low_stock} />
+              <div key={p.id} className="w-[260px] shrink-0 sm:w-[280px]">
+                <ProductCard product={p} lowStockLimit={settings.low_stock} />
+              </div>
             ))}
-          </div>
+          </HorizontalScroller>
         </section>
       )}
     </div>
