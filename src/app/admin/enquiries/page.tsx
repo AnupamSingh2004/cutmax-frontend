@@ -40,10 +40,10 @@ export default function AdminEnquiriesPage() {
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.per_page)) : 1;
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-navy-900">Enquiries</h1>
+    <div className="flex h-full flex-col gap-6">
+      <h1 className="shrink-0 text-2xl font-bold text-navy-900">Enquiries</h1>
 
-      <div className="flex gap-3">
+      <div className="flex shrink-0 gap-3">
         <Input placeholder="Search reference, name, phone…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} className="flex-1" />
         <Select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }} className="w-48">
           <option value="">All statuses</option>
@@ -55,9 +55,9 @@ export default function AdminEnquiriesPage() {
         </Select>
       </div>
 
-      <div className="overflow-hidden rounded-card-lg border border-border bg-white shadow-card">
+      <div className="min-h-0 flex-1 overflow-auto rounded-card-lg border border-border bg-white shadow-card">
         <table className="w-full text-sm">
-          <thead className="bg-bg-soft text-left text-xs uppercase tracking-wide text-muted">
+          <thead className="sticky top-0 z-10 bg-bg-soft text-left text-xs uppercase tracking-wide text-muted">
             <tr>
               <th className="px-4 py-3">Reference</th>
               <th className="px-4 py-3">Customer</th>
@@ -78,21 +78,23 @@ export default function AdminEnquiriesPage() {
                 <td className="px-4 py-2">
                   {enq.customerName}
                   <br />
-                  <span className="text-xs text-muted">{enq.phone}</span>
+                  <span className="text-xs text-muted-soft">{enq.phone}</span>
                 </td>
-                <td className="px-4 py-2 text-muted">{enq.company ?? "-"}</td>
+                <td className="px-4 py-2 text-heading">{enq.company ?? "-"}</td>
                 <td className="px-4 py-2">₹{enq.grandTotal.toFixed(2)}</td>
                 <td className="px-4 py-2">
                   <Badge tone={STATUS_TONE[enq.status]}>{enq.status}</Badge>
                 </td>
-                <td className="px-4 py-2 text-xs text-muted">{new Date(enq.createdAt).toLocaleDateString("en-IN")}</td>
+                <td className="px-4 py-2 text-xs text-muted-soft">{new Date(enq.createdAt).toLocaleDateString("en-IN")}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+      <div className="shrink-0">
+        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+      </div>
     </div>
   );
 }
