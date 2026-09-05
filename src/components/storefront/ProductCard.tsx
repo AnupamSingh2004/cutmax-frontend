@@ -44,7 +44,7 @@ export function ProductCard({ product, lowStockLimit }: { product: Product; lowS
         <Link href={`/products/${product.sku}`} className="font-display mb-1 block truncate text-[17px] font-semibold text-heading hover:underline">
           {product.name}
         </Link>
-        <div className="mb-4 text-[13px] text-muted">
+        <div className="mb-4 text-[13px] text-muted-soft">
           SKU {product.sku} · {product.stock} {product.unit} available
         </div>
 

@@ -185,7 +185,7 @@ export default async function HomePage() {
                     <div className="p-5">
                       <div className="mb-1.5 text-[11px] font-bold tracking-wide text-red-600">{p.subCategory}</div>
                       <div className="font-display mb-1 truncate text-[15.5px] font-semibold text-heading">{p.name}</div>
-                      <div className="mb-3.5 text-[12.5px] text-muted">SKU {p.sku}</div>
+                      <div className="mb-3.5 text-[12.5px] text-muted-soft">SKU {p.sku}</div>
                       <div className="flex items-center justify-between gap-2.5">
                         <span className="font-display text-lg font-bold text-heading">₹{p.price.toFixed(2)}</span>
                         <span className="rounded-[3px] bg-navy-900 px-3.5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-navy-700">View</span>
