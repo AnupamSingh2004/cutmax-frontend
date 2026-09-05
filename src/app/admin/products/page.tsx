@@ -682,9 +682,9 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-2">
                     <p className="font-medium text-navy-900">{p.sku}</p>
-                    <p className="text-xs text-muted-soft">{p.name}</p>
+                    <p className="text-xs text-heading">{p.name}</p>
                   </td>
-                  <td className="px-4 py-2 text-xs text-muted-soft">
+                  <td className="px-4 py-2 text-xs text-heading">
                     {p.category}
                     <br />
                     {p.subCategory}
